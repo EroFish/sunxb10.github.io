@@ -1,0 +1,604 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+
+  <meta charset="UTF-8">
+  
+    <title>在Hexo中显示数学公式 | sunxb10&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="sunxb10">
+    
+
+    
+    <meta name="description" content="MathJax配置
+为显示数学公式，首先需配置MathJax，这是用于渲染和显示数学公式的JavaScript库，能将用户输入的$\mathrm{\LaTeX}$、MathML和ASCIIMathML指令转换为可在浏览器中显示的数学公式，并且它所渲染输出的数学公式是真正的矢量字符，而不是像维基百科等网站那样使用点阵图片显示公式和符号。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="在Hexo中显示数学公式">
+<meta property="og:url" content="http://sunxb10.github.io/2015/01/02/display-math-equations-with-hexo/">
+<meta property="og:site_name" content="sunxb10's blog">
+<meta property="og:description" content="MathJax配置
+为显示数学公式，首先需配置MathJax，这是用于渲染和显示数学公式的JavaScript库，能将用户输入的$\mathrm{\LaTeX}$、MathML和ASCIIMathML指令转换为可在浏览器中显示的数学公式，并且它所渲染输出的数学公式是真正的矢量字符，而不是像维基百科等网站那样使用点阵图片显示公式和符号。">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="在Hexo中显示数学公式">
+<meta name="twitter:description" content="MathJax配置
+为显示数学公式，首先需配置MathJax，这是用于渲染和显示数学公式的JavaScript库，能将用户输入的$\mathrm{\LaTeX}$、MathML和ASCIIMathML指令转换为可在浏览器中显示的数学公式，并且它所渲染输出的数学公式是真正的矢量字符，而不是像维基百科等网站那样使用点阵图片显示公式和符号。">
+
+
+    
+    <link rel="alternative" href="/atom.xml" title="sunxb10&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+
+</head>
+
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="sunxb10&#39;s blog" title="sunxb10&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="sunxb10&#39;s blog">sunxb10&#39;s blog</a></h1>
+				<h2 class="blog-motto">Blogging = Hexo + Markdown + Git + GitHub Pages</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+						<li><a href="/recommended-links">链接</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:sunxb10.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/01/02/display-math-equations-with-hexo/" title="在Hexo中显示数学公式" itemprop="url">在Hexo中显示数学公式</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="http://sunxb10.github.io/about" title="sunxb10" target="_blank" itemprop="author">sunxb10</a>
+		
+  <p class="article-time">
+    <time datetime="2015-01-02T15:58:05.000Z" itemprop="datePublished"> 发表于 2015 年 01 月 02 日</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#MathJax配置"><span class="toc-number">1.</span> <span class="toc-text">MathJax配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#行内公式与行间公式"><span class="toc-number">2.</span> <span class="toc-text">行内公式与行间公式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#特殊符号与公式换行"><span class="toc-number">3.</span> <span class="toc-text">特殊符号与公式换行</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#数学环境"><span class="toc-number">4.</span> <span class="toc-text">数学环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#公式引用"><span class="toc-number">5.</span> <span class="toc-text">公式引用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#公式编号"><span class="toc-number">6.</span> <span class="toc-text">公式编号</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#将公式复制到本地文件"><span class="toc-number">7.</span> <span class="toc-text">将公式复制到本地文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#备注"><span class="toc-number">8.</span> <span class="toc-text">备注</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="MathJax配置">MathJax配置</h2>
+<p>为显示数学公式，首先需配置<a href="http://www.mathjax.org/" target="_blank" rel="external">MathJax</a>，这是用于渲染和显示数学公式的JavaScript库，能将用户输入的<a href="http://en.wikipedia.org/wiki/LaTeX" target="_blank" rel="external">$\mathrm{\LaTeX}$</a>、<a href="http://en.wikipedia.org/wiki/MathML" target="_blank" rel="external">MathML</a>和<a href="http://en.wikipedia.org/wiki/ASCIIMathML" target="_blank" rel="external">ASCIIMathML</a>指令转换为可在浏览器中显示的数学公式，并且它所渲染输出的数学公式是真正的矢量字符，而不是像维基百科等网站那样使用点阵图片显示公式和符号。</p>
+<a id="more"></a>
+<p>考虑到MathML和ASCIIMathML指令较为繁杂，这里只配置针对$\mathrm{\LaTeX}$指令的渲染。在Hexo博客目录中找到文件<code>/themes/xxxx/layout/_partial/head.ejs</code>（<code>xxxx</code>代表当前使用的主题），在<code>&lt;head&gt;...&lt;/head&gt;</code>标签内帖入如下代码：</p>
+<figure class="highlight html"><figcaption><span>MathJax configuration</span><a href="https://gist.github.com/sunxb10/b410f82fb8bc07e1b76d" target="_blank" rel="external">gist snippet</a></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!-- MathJax Start --&gt;</span></div><div class="line"><span class="comment">&lt;!-- MathJax documentation: http://docs.mathjax.org/en/latest/index.html --&gt;</span></div><div class="line"><span class="tag">&lt;<span class="title">script</span> <span class="attribute">type</span>=<span class="value">"text/x-mathjax-config"</span>&gt;</span><span class="javascript"></span></div><div class="line">  MathJax.Hub.Config({</div><div class="line">    tex2jax: {  <span class="comment">// tex2jax preprocessor</span></div><div class="line">      inlineMath: [ [<span class="string">'$'</span>,<span class="string">'$'</span>] ],  <span class="comment">// delimiters for in-line math</span></div><div class="line">      displayMath: [ [<span class="string">'$$'</span>,<span class="string">'$$'</span>] ],  <span class="comment">// delimiters for displayed equations</span></div><div class="line">      processEscapes: <span class="literal">true</span>,  <span class="comment">// enable \$ to represent a single dollar sign</span></div><div class="line">      skipTags: [<span class="string">'script'</span>, <span class="string">'noscript'</span>, <span class="string">'style'</span>, <span class="string">'textarea'</span>, <span class="string">'pre'</span>, <span class="string">'code'</span>]  <span class="comment">// MathJax will not process contents inside these tags </span></div><div class="line">    },</div><div class="line">    TeX: {  <span class="comment">// TeX/LaTeX input processor</span></div><div class="line">      equationNumbers: { autoNumber: <span class="string">"AMS"</span> },  <span class="comment">// only number those equations in specific AMSmath environments</span></div><div class="line">      extensions: [<span class="string">"AMSmath.js"</span>,<span class="string">"AMSsymbols.js"</span>,<span class="string">"noErrors.js"</span>,<span class="string">"noUndefined.js"</span>]  <span class="comment">// introduce AMS extensions and suppress generating error messages </span></div><div class="line">    },</div><div class="line">    <span class="string">"HTML-CSS"</span>: {  <span class="comment">// HTML-CSS output processor (this is the default output of MathJax)</span></div><div class="line">      scale: <span class="number">110</span>,  <span class="comment">// The scaling factor of math with respect to the surrounding text</span></div><div class="line">      linebreaks: { automatic: <span class="literal">true</span> } <span class="comment">// automatically breaks the line if necessary</span></div><div class="line">    },</div><div class="line">    SVG: {  <span class="comment">// SVG output processor</span></div><div class="line">      scale: <span class="number">110</span>,  <span class="comment">// The scaling factor of math with respect to the surrounding text</span></div><div class="line">      linebreaks: { automatic: <span class="literal">true</span> } <span class="comment">// automatically breaks the line if necessary</span></div><div class="line">    },</div><div class="line">    menuSettings: {  <span class="comment">// settings for the mathematics contextual menu</span></div><div class="line">      zoom: <span class="string">"Hover"</span>  <span class="comment">// set equation zooming to be triggered by a single mouse click</span></div><div class="line">    }</div><div class="line">  });</div><div class="line"> </div><div class="line">  MathJax.Hub.Queue(<span class="function"><span class="keyword">function</span><span class="params">()</span> </span>{ <span class="comment">// Fix &lt;code&gt; tags after MathJax finishes running, this is a hack to overcome a shortcoming of Markdown</span></div><div class="line">      <span class="keyword">var</span> all = MathJax.Hub.getAllJax(), i;</div><div class="line">      <span class="keyword">for</span>(i=<span class="number">0</span>; i &lt; all.length; i += <span class="number">1</span>) {</div><div class="line">          all[i].SourceElement().parentNode.className += <span class="string">' has-jax'</span>;</div><div class="line">      }</div><div class="line">  });</div><div class="line"><span class="tag">&lt;/<span class="title">script</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="title">script</span> <span class="attribute">type</span>=<span class="value">"text/javascript"</span></span></div><div class="line">   <span class="attribute">src</span>=<span class="value">"http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"</span>&gt;<span class="javascript">  <span class="comment">// link to the MathJax CDN</span></span></div><div class="line"><span class="tag">&lt;/<span class="title">script</span>&gt;</span></div><div class="line"><span class="comment">&lt;!-- MathJax End --&gt;</span></div></pre></td></tr></table></figure>
+
+<p>其中各项设置的具体作用可参见<a href="http://docs.mathjax.org/en/latest/" target="_blank" rel="external">官方文档</a>，用户也可根据需要自行修改，下面的示例都将基于上面的MathJax配置实现。</p>
+<h2 id="行内公式与行间公式">行内公式与行间公式</h2>
+<p>使用<code>$...$</code>输入行内公式（inline-style math）：</p>
+<ul>
+<li><p>输入：<code>$E = m c^{2}$</code></p>
+<p>输出：$E = m c^{2}$</p>
+</li>
+<li><p>输入：<code>$a^{2} + b^{2} = c^{2}$</code></p>
+<p>输出：$a^{2} + b^{2} = c^{2}$</p>
+</li>
+</ul>
+<p>使用<code>$$...$$</code>输入行间公式（display-style math）：</p>
+<ul>
+<li><p>输入：<code>$$f(x) = \frac{1}{\sigma\sqrt{2\pi}}e^{-\frac{(x-\mu)^{2}}{2\sigma^{2}}}$$</code></p>
+<p>输出：$$f(x) = \frac{1}{\sigma\sqrt{2\pi}}e^{-\frac{(x-\mu)^{2}}{2\sigma^{2}}}$$</p>
+</li>
+<li><p>输入：<code>$$v=\frac{\Delta s}{\Delta t}$$</code></p>
+<p>输出：$$v=\frac{\Delta s}{\Delta t}$$</p>
+</li>
+</ul>
+<h2 id="特殊符号与公式换行">特殊符号与公式换行</h2>
+<p>若用户输入的$\mathrm{\LaTeX}$代码中包含Markdown的特殊符号（如<code>_</code>、<code>*</code>），则公式渲染会因Markdown解析而导致错误：</p>
+<ul>
+<li><p>输入：<code>$$f_{n}=f_{n-1}+f_{n-2}$$</code></p>
+<p>输出：$$f<em>{n}=f</em>{n-1}+f_{n-2}$$</p>
+</li>
+</ul>
+<p>解决办法是在这些特殊符号前加转义符号<code>\</code>以规避 Markdown 解析：</p>
+<ul>
+<li><p>输入：<code>$$f\_{n}=f\_{n-1}+f\_{n-2}$$</code></p>
+<p>输出：$$f_{n}=f_{n-1}+f_{n-2}$$</p>
+</li>
+</ul>
+<p>但<code>\</code>同时也是$\mathrm{\LaTeX}$的特殊符号，所以在多行公式换行时必须用<code>\\\</code>而不是<code>\\</code>：</p>
+<ul>
+<li>输入：</li>
+</ul>
+<figure class="highlight latex"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="formula">$$</span></div><div class="line"><span class="command">\mathrm</span><span class="special">{</span>e<span class="special">}</span>^<span class="special">{</span>i<span class="command">\theta</span><span class="special">}</span>=<span class="command">\cos</span><span class="command">\theta</span>+i<span class="command">\sin</span><span class="command">\theta</span><span class="command">\\</span></div><div class="line"><span class="command">\mathrm</span><span class="special">{</span>e<span class="special">}</span>^<span class="special">{</span>i<span class="command">\pi</span><span class="special">}</span>+1=0</div><div class="line">$$</div></pre></td></tr></table></figure>
+
+<p>  输出：<br>  $$<br>  \mathrm{e}^{i\theta}=\cos\theta+i\sin\theta\<br>  \mathrm{e}^{i\pi}+1=0<br>  $$</p>
+<ul>
+<li>输入：</li>
+</ul>
+<figure class="highlight latex"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="formula">$$</span></div><div class="line"><span class="command">\mathrm</span><span class="special">{</span>e<span class="special">}</span>^<span class="special">{</span>i<span class="command">\theta</span><span class="special">}</span>=<span class="command">\cos</span><span class="command">\theta</span>+i<span class="command">\sin</span><span class="command">\theta</span><span class="command">\\</span><span class="command">\</span></div><div class="line"><span class="command">\mathrm</span><span class="special">{</span>e<span class="special">}</span>^<span class="special">{</span>i<span class="command">\pi</span><span class="special">}</span>+1=0</div><div class="line">$$</div></pre></td></tr></table></figure>
+
+<p>  输出：<br>  $$<br>  \mathrm{e}^{i\theta}=\cos\theta+i\sin\theta\\<br>  \mathrm{e}^{i\pi}+1=0<br>  $$</p>
+<p>另外，由于<code>$</code>已被当做行内公式的定界符，如果需要输入单独的美元符号，应输入<code>\$</code>，即得到\$。</p>
+<h2 id="数学环境">数学环境</h2>
+<p>$\mathrm{\LaTeX}$提供了<code>equation</code>、<code>align</code>、<code>eqnarray</code>等用于排版复杂公式的数学环境，在Hexo中可以直接使用这些数学环境，不需要将其置于<code>$...$</code>或<code>$$...$$</code>之间，因此实际上可以用这些数学环境取代前面介绍的<code>$$...$$</code>行间公式：</p>
+<ul>
+<li>输入：</li>
+</ul>
+<figure class="highlight latex"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="command">\begin</span><span class="special">{</span>equation<span class="special">}</span></div><div class="line">f<span class="command">\_</span><span class="special">{</span>0<span class="special">}</span> = 1<span class="command">\\</span><span class="command">\</span></div><div class="line">f<span class="command">\_</span><span class="special">{</span>1<span class="special">}</span> = 1<span class="command">\\</span><span class="command">\</span></div><div class="line">f<span class="command">\_</span><span class="special">{</span>n<span class="special">}</span> = f<span class="command">\_</span><span class="special">{</span>n-1<span class="special">}</span> + f<span class="command">\_</span><span class="special">{</span>n-2<span class="special">}</span><span class="command">\quad</span> (n&gt;1)</div><div class="line"><span class="command">\end</span><span class="special">{</span>equation<span class="special">}</span></div></pre></td></tr></table></figure>
+
+<p>  输出：<br>  \begin{equation}<br>  f_{0} = 1\\<br>  f_{1} = 1\\<br>  f_{n} = f_{n-1} + f_{n-2}\quad (n&gt;1)<br>  \end{equation}</p>
+<ul>
+<li>输入：</li>
+</ul>
+<figure class="highlight latex"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="command">\begin</span><span class="special">{</span>align<span class="special">}</span></div><div class="line"><span class="command">\begin</span><span class="special">{</span>vmatrix<span class="special">}</span></div><div class="line">1 <span class="special">&</span> 1 <span class="special">&</span> 1 <span class="special">&</span> <span class="command">\cdots</span> <span class="special">&</span> 1 <span class="command">\\</span><span class="command">\</span></div><div class="line">a<span class="command">\_</span><span class="special">{</span>1<span class="special">}</span> <span class="special">&</span> a<span class="command">\_</span><span class="special">{</span>2<span class="special">}</span> <span class="special">&</span> a<span class="command">\_</span><span class="special">{</span>3<span class="special">}</span> <span class="special">&</span> <span class="command">\cdots</span> <span class="special">&</span> a<span class="command">\_</span><span class="special">{</span>n<span class="special">}</span> <span class="command">\\</span><span class="command">\</span></div><div class="line">a<span class="command">\_</span><span class="special">{</span>1<span class="special">}</span>^<span class="special">{</span>2<span class="special">}</span> <span class="special">&</span> a<span class="command">\_</span><span class="special">{</span>2<span class="special">}</span>^<span class="special">{</span>2<span class="special">}</span> <span class="special">&</span> a<span class="command">\_</span><span class="special">{</span>3<span class="special">}</span>^<span class="special">{</span>2<span class="special">}</span> <span class="special">&</span> <span class="command">\cdots</span> <span class="special">&</span> a<span class="command">\_</span><span class="special">{</span>n<span class="special">}</span>^<span class="special">{</span>2<span class="special">}</span> <span class="command">\\</span><span class="command">\</span></div><div class="line">a<span class="command">\_</span><span class="special">{</span>1<span class="special">}</span>^<span class="special">{</span>3<span class="special">}</span> <span class="special">&</span> a<span class="command">\_</span><span class="special">{</span>2<span class="special">}</span>^<span class="special">{</span>3<span class="special">}</span> <span class="special">&</span> a<span class="command">\_</span><span class="special">{</span>3<span class="special">}</span>^<span class="special">{</span>3<span class="special">}</span> <span class="special">&</span> <span class="command">\cdots</span> <span class="special">&</span> a<span class="command">\_</span><span class="special">{</span>n<span class="special">}</span>^<span class="special">{</span>3<span class="special">}</span> <span class="command">\\</span><span class="command">\</span></div><div class="line"><span class="command">\vdots</span> <span class="special">&</span> <span class="command">\vdots</span> <span class="special">&</span> <span class="command">\vdots</span> <span class="special">&</span> <span class="command">\ddots</span> <span class="special">&</span> <span class="command">\vdots</span> <span class="command">\\</span><span class="command">\</span></div><div class="line">a<span class="command">\_</span><span class="special">{</span>1<span class="special">}</span>^<span class="special">{</span>n−1<span class="special">}</span> <span class="special">&</span> a<span class="command">\_</span><span class="special">{</span>2<span class="special">}</span>^<span class="special">{</span>n−1<span class="special">}</span> <span class="special">&</span> a<span class="command">\_</span><span class="special">{</span>3<span class="special">}</span>^<span class="special">{</span>n−1<span class="special">}</span> <span class="special">&</span> <span class="command">\cdots</span> <span class="special">&</span> a<span class="command">\_</span><span class="special">{</span>n<span class="special">}</span>^<span class="special">{</span>n−1<span class="special">}</span></div><div class="line"><span class="command">\end</span><span class="special">{</span>vmatrix<span class="special">}</span> = <span class="command">\prod</span><span class="command">\_</span><span class="special">{</span>1<span class="command">\leqslant</span><span class="special">{</span><span class="special">}</span>j &lt; i<span class="command">\leqslant</span><span class="special">{</span><span class="special">}</span>n<span class="special">}</span>(a<span class="command">\_</span><span class="special">{</span>i<span class="special">}</span>−a<span class="command">\_</span><span class="special">{</span>j<span class="special">}</span>) </div><div class="line"><span class="command">\end</span><span class="special">{</span>align<span class="special">}</span></div></pre></td></tr></table></figure>
+
+<p>  输出：<br>  \begin{align}<br>  \begin{vmatrix}<br>  1 &amp; 1 &amp; 1 &amp; \cdots &amp; 1 \\<br>  a_{1} &amp; a_{2} &amp; a_{3} &amp; \cdots &amp; a_{n} \\<br>  a_{1}^{2} &amp; a_{2}^{2} &amp; a_{3}^{2} &amp; \cdots &amp; a_{n}^{2} \\<br>  a_{1}^{3} &amp; a_{2}^{3} &amp; a_{3}^{3} &amp; \cdots &amp; a_{n}^{3} \\<br>  \vdots &amp; \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\<br>  a_{1}^{n−1} &amp; a_{2}^{n−1} &amp; a_{3}^{n−1} &amp; \cdots &amp; a_{n}^{n−1}<br>  \end{vmatrix} = \prod_{1\leqslant{}j &lt; i\leqslant{}n}(a_{i}−a_{j})<br>  \end{align}</p>
+<h2 id="公式引用">公式引用</h2>
+<p>通过MathJax还可以实现$\mathrm{\LaTeX}$引用公式编号的功能：</p>
+<ul>
+<li>输入：</li>
+</ul>
+<figure class="highlight latex"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="command">\begin</span><span class="special">{</span>align<span class="special">}</span></div><div class="line"><span class="special">&</span>e^<span class="special">{</span>i<span class="command">\pi</span><span class="special">}</span> + 1 = 0 <span class="command">\label</span><span class="special">{</span>eq:Euler<span class="special">}</span><span class="command">\\</span><span class="command">\</span></div><div class="line"><span class="special">&</span><span class="command">\hat</span><span class="special">{</span>H<span class="special">}</span><span class="command">\Psi</span> = i<span class="command">\hbar</span><span class="command">\frac</span><span class="special">{</span><span class="command">\partial</span><span class="special">}</span><span class="special">{</span><span class="command">\partial</span> t<span class="special">}</span><span class="command">\Psi</span> <span class="command">\label</span><span class="special">{</span>eq:Schrödinger<span class="special">}</span><span class="command">\\</span><span class="command">\</span></div><div class="line"><span class="special">&</span><span class="command">\sqrt</span><span class="special">{</span>1 + 2<span class="command">\sqrt</span><span class="special">{</span>1 + 3<span class="command">\sqrt</span><span class="special">{</span>1 + 4<span class="command">\sqrt</span><span class="special">{</span>1 + <span class="command">\cdots</span><span class="special">}</span><span class="special">}</span><span class="special">}</span><span class="special">}</span> = 3 <span class="command">\label</span><span class="special">{</span>eq:Ramanujan<span class="special">}</span></div><div class="line"><span class="command">\end</span><span class="special">{</span>align<span class="special">}</span></div></pre></td></tr></table></figure>
+
+<p>  输出：<br>  \begin{align}<br>  &amp;e^{i\pi} + 1 = 0 \label{eq:Euler}\\<br>  &amp;\hat{H}\Psi = i\hbar\frac{\partial}{\partial t}\Psi \label{eq:Schrödinger}\\<br>  &amp;\sqrt{1 + 2\sqrt{1 + 3\sqrt{1 + 4\sqrt{1 + \cdots}}}} = 3 \label{eq:Ramanujan}<br>  \end{align}</p>
+<p>使用<code>\eqref{}</code>即可对带有<code>\label{}</code>的公式进行引用：</p>
+<ol>
+<li><p>输入：<code>\eqref{eq:Euler}式是欧拉公式</code></p>
+<p>输出：\eqref{eq:Euler}式是欧拉公式</p>
+</li>
+<li><p>输入：<code>\eqref{eq:Schrödinger}式是薛定谔方程</code></p>
+<p>输出：\eqref{eq:Schrödinger}式是薛定谔方程</p>
+</li>
+<li><p>输入：<code>\eqref{eq:Ramanujan}式是拉马努金恒等式</code></p>
+<p>输出：\eqref{eq:Ramanujan}式是拉马努金恒等式</p>
+</li>
+</ol>
+<h2 id="公式编号">公式编号</h2>
+<p><code>equation</code>、<code>align</code>和<code>eqnarray</code>环境会为公式自动编号，对应地，$\mathrm{\LaTeX}$也分别提供了不带编号的<code>equation*</code>、<code>align*</code>和<code>eqnarray*</code>环境。但这里不能直接使用这三个不带编号的环境，原因就是这些环境的名称中出现了Markdown的特殊符号<code>*</code>，不难想见解决办法就是在环境名称的<code>*</code>前面加<code>\</code>：</p>
+<ul>
+<li>输入：</li>
+</ul>
+<figure class="highlight latex"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="command">\begin</span><span class="special">{</span>align<span class="command">\*</span><span class="special">}</span></div><div class="line"><span class="special">&</span><span class="command">\nabla</span> <span class="command">\cdot</span> <span class="command">\boldsymbol</span><span class="special">{</span>E<span class="special">}</span> = <span class="command">\frac</span><span class="special">{</span><span class="command">\rho</span><span class="special">}</span><span class="special">{</span><span class="command">\varepsilon</span><span class="command">\_</span><span class="special">{</span>0<span class="special">}</span><span class="special">}</span> <span class="command">\\</span><span class="command">\</span></div><div class="line"><span class="special">&</span><span class="command">\nabla</span> <span class="command">\cdot</span> <span class="command">\boldsymbol</span><span class="special">{</span>B<span class="special">}</span> = 0 <span class="command">\\</span><span class="command">\</span></div><div class="line"><span class="special">&</span><span class="command">\nabla</span> <span class="command">\times</span> <span class="command">\boldsymbol</span><span class="special">{</span>E<span class="special">}</span> = -<span class="command">\frac</span><span class="special">{</span><span class="command">\partial</span><span class="command">\boldsymbol</span><span class="special">{</span>B<span class="special">}</span><span class="special">}</span><span class="special">{</span><span class="command">\partial</span> t<span class="special">}</span> <span class="command">\\</span><span class="command">\</span></div><div class="line"><span class="special">&</span><span class="command">\nabla</span> <span class="command">\times</span> <span class="command">\boldsymbol</span><span class="special">{</span>B<span class="special">}</span> = <span class="command">\mu</span><span class="command">\_</span><span class="special">{</span>0<span class="special">}</span> <span class="command">\boldsymbol</span><span class="special">{</span>J<span class="special">}</span> + <span class="command">\mu</span><span class="command">\_</span><span class="special">{</span>0<span class="special">}</span><span class="command">\varepsilon</span><span class="command">\_</span><span class="special">{</span>0<span class="special">}</span><span class="command">\frac</span><span class="special">{</span><span class="command">\partial</span><span class="command">\boldsymbol</span><span class="special">{</span>E<span class="special">}</span><span class="special">}</span><span class="special">{</span><span class="command">\partial</span> t<span class="special">}</span></div><div class="line"><span class="command">\end</span><span class="special">{</span>align<span class="command">\*</span><span class="special">}</span></div></pre></td></tr></table></figure>
+
+<p>  输出：<br>  \begin{align*}<br>  &amp;\nabla \cdot \boldsymbol{E} = \frac{\rho}{\varepsilon_{0}} \\<br>  &amp;\nabla \cdot \boldsymbol{B} = 0 \\<br>  &amp;\nabla \times \boldsymbol{E} = -\frac{\partial\boldsymbol{B}}{\partial t} \\<br>  &amp;\nabla \times \boldsymbol{B} = \mu_{0} \boldsymbol{J} + \mu_{0}\varepsilon_{0}\frac{\partial\boldsymbol{E}}{\partial t}<br>  \end{align*}</p>
+<p>如果在同一个数学环境中需要给其中一部分公式编号，而另一部分公式不编号，则可以使用自动编号的<code>equation</code>、<code>align</code>和<code>eqnarray</code>环境，然后在不需要编号的公式之后（换行符<code>\\\</code>之前）加上指令<code>\notag</code>：</p>
+<ul>
+<li>输入：</li>
+</ul>
+<figure class="highlight latex"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="command">\begin</span><span class="special">{</span>align<span class="special">}</span></div><div class="line">E <span class="special">&</span>= mc^<span class="special">{</span>2<span class="special">}</span> <span class="command">\notag</span> <span class="command">\\</span><span class="command">\</span></div><div class="line">E <span class="special">&</span>= h<span class="command">\nu</span> <span class="command">\notag</span> <span class="command">\\</span><span class="command">\</span></div><div class="line">m <span class="special">&</span>= h<span class="command">\nu</span>/c^<span class="special">{</span>2<span class="special">}</span></div><div class="line"><span class="command">\end</span><span class="special">{</span>align<span class="special">}</span></div></pre></td></tr></table></figure>
+
+<p>  输出：<br>  \begin{align}<br>  E &amp;= mc^{2} \notag \\<br>  E &amp;= h\nu \notag \\<br>  m &amp;= h\nu/c^{2}<br>  \end{align}</p>
+<h2 id="将公式复制到本地文件">将公式复制到本地文件</h2>
+<p>在MathJax渲染得到的公式上单击鼠标右键弹出菜单，点击<code>Show Math As</code>子菜单中的<code>MathML Code</code>，将得到的MathML代码复制粘贴到本地的Microsoft Word文档中，并把粘贴选项改为“只保留文本”，如此即可得到相应公式，还可以用Microsoft Word自带的公式编辑器做进一步修改。该操作貌似只适用于Microsoft Word 2007之后的版本（即支持<code>.docx</code>格式的版本）。</p>
+<p>同理，在上述<code>Show Math As</code>的子菜单中选择<code>TeX Commands</code>即可得到相应的$\mathrm{\TeX}$代码。</p>
+<h2 id="备注">备注</h2>
+<p>本博客当前使用的<a href="https://github.com/wuchong/jacman" target="_blank" rel="external">Jacman</a>主题已包含MathJax，具体配置在<code>/themes/jacman/layout/_partial/mathjax.ejs</code>文件中，用户可根据需求对其进行修改。若某篇文章需要使用MathJax显示数学公式，则用户只需在相应Markdown文件头部的front-matter内注明<code>mathjax: true</code>即可。</p>
+<p>MathJax库与Markdown解析器之间的相容配合是实现数学公式显示的关键，考虑到Markdown有多种实现和解析器，再加上MathJax库和Markdown解析器自身的升级迭代，上面介绍的这套方法有可能在特定情况下出现某些bug，请诸位谅解。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Hexo/">Hexo</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/数学/">数学</a><a href="/tags/Hexo/">Hexo</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	<div class="share-jiathis">
+	  
+<div class="jiathis_style_24x24">
+	<a class="jiathis_button_tsina"></a>
+	<a class="jiathis_button_weixin"></a>
+	<a class="jiathis_button_renren"></a>
+	<a class="jiathis_button_qzone"></a>
+	<a class="jiathis_button_googleplus"></a>
+	<a class="jiathis_button_douban"></a>
+	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+    var jiathis_config={
+    data_track_clickback:true,
+    sm:"copy,renren,cqq",
+    pic:"",
+    summary:"",
+     ralateuid:{"tsina":"2408142172"},hideMore:false}
+    
+  </script> 
+<script type="text/javascript" src="//v3.jiathis.com/code/jia.js?uid=
+2015541" charset="utf-8"></script>      
+
+	 </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2015/01/02/notes-on-rsa/"  title="RSA加密算法学习笔记">
+ <strong>下一篇：</strong><br/> 
+ <span>RSA加密算法学习笔记
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2015/01/02/display-math-equations-with-hexo/" data-title="在Hexo中显示数学公式" data-url="http://sunxb10.github.io/2015/01/02/display-math-equations-with-hexo/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#MathJax配置"><span class="toc-number">1.</span> <span class="toc-text">MathJax配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#行内公式与行间公式"><span class="toc-number">2.</span> <span class="toc-text">行内公式与行间公式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#特殊符号与公式换行"><span class="toc-number">3.</span> <span class="toc-text">特殊符号与公式换行</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#数学环境"><span class="toc-number">4.</span> <span class="toc-text">数学环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#公式引用"><span class="toc-number">5.</span> <span class="toc-text">公式引用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#公式编号"><span class="toc-number">6.</span> <span class="toc-text">公式编号</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#将公式复制到本地文件"><span class="toc-number">7.</span> <span class="toc-text">将公式复制到本地文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#备注"><span class="toc-number">8.</span> <span class="toc-text">备注</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Hexo/" title="Hexo">Hexo<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/密码学/" title="密码学">密码学<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/RSA/" title="RSA">RSA<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/密码学/" title="密码学">密码学<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数学/" title="数学">数学<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <!-- 微博秀 -->
+    <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=1&ptype=1&speed=0&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=2408142172&verifier=bce1c748&dpc=1"></iframe>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Welcome to my blog. Hope you&#39;d enjoy it. <br/>
+			Any comments from you will be considerably appreciated.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/2408142172" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/sunxb10" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		<a href="https://www.zhihu.com/people/sunxb10" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+		<p class="copyright">
+
+		<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br />Except where otherwise noted, content on this site is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+
+		<br />
+		<br />
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2015 
+		
+		<a href="http://sunxb10.github.io" target="_blank" title="sunxb10">sunxb10</a>
+			
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"sunxb10"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax Start -->
+<!-- MathJax documentation: http://docs.mathjax.org/en/latest/index.html -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {  // tex2jax preprocessor
+      inlineMath: [ ['$','$'] ],  // delimiters for in-line math
+      displayMath: [ ['$$','$$'] ],  // delimiters for displayed equations
+      processEscapes: true,  // enable \$ to represent a single dollar sign
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']  // MathJax will not process contents inside these tags 
+    },
+    TeX: {  // TeX/LaTeX input processor
+      equationNumbers: { autoNumber: "AMS" },  // only number those equations in specific AMSmath environments (just like equation numbering in TeX/LaTeX)
+      extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]  // introduce AMSmath and AMSsymbols extensions; suppress generating error messages (instead, MathJax will directly display the original TeX/LaTeX code) 
+    },
+    "HTML-CSS": {  // HTML-CSS output processor (this is the default output of MathJax)
+      //scale: 105,  // The scaling factor of math with respect to the surrounding text
+      linebreaks: { automatic: true } // automatically breaks the line if necessary
+    },
+    SVG: {  // SVG output processor
+      //scale: 105,  // The scaling factor of math with respect to the surrounding text
+      linebreaks: { automatic: true } // automatically breaks the line if necessary
+    },
+    menuSettings: {  // settings for the mathematics contextual menu
+      zoom: "Hover"  // set equation zooming to be triggered by a single mouse click
+    }
+  });
+ 
+  MathJax.Hub.Queue(function() { // Fix <code> tags after MathJax finishes running, this is a hack to overcome a shortcoming of Markdown
+      var all = MathJax.Hub.getAllJax(), i;
+      for(i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+  });
+</script>
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">  // link to the MathJax CDN
+</script>
+<!-- MathJax End -->
+
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+
+
+<!-- MathJax End -->
+
+  </body>
+</html>
+
+
+<!-- 'Fork me on GitHub' banner -->
+<a href="https://github.com/sunxb10/sunxb10.github.io"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/52760788cde945287fbb584134c4cbc2bc36f904/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f77686974655f6666666666662e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png"></a>

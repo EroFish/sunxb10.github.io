@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+    
+    
+  <url>
+    <loc>http://sunxb10.github.io/2015/01/02/notes-on-rsa/</loc>
+    <lastmod>2015-03-20T06:39:08.000Z</lastmod>
+    <data>
+        <display>
+        <title>RSA加密算法学习笔记</title>
+        <pubTime>2015-01-02T14:46:52.000Z</pubTime>
+        
+        <tag>密码学 </tag>
+         
+        <tag>RSA </tag>
+         
+         <content><![CDATA[<h2 id="历史">历史</h2>
+<p>自<a href="http://zh.wikipedia.org/wiki/%E5%AF%86%E7%A2%BC%E6%A3%92" target="_blank" rel="external">密码棒</a>和<a href="http://zh.wikipedia.org/wiki/%E5%87%AF%E6%92%92%E5%AF%86%E7%A0%81" target="_blank" rel="external">凯撒密码</a>发明之后，人们在漫长的历史岁月中始终遵循着一套相同的加密、解密模式，即Alice使用一个<a href="http://zh.wikipedia.org/wiki/%E5%AF%86%E9%92%A5" target="_blank" rel="external">密钥</a>对<a href="http://zh.wikipedia.org/wiki/%E6%98%8E%E6%96%87" target="_blank" rel="external">明文</a>进行加密得到<a href="http://zh.wikipedia.org/wiki/%E5%AF%86%E6%96%87" target="_blank" rel="external">密文</a>，Bob收到密文后使用同样的密钥进行解密得到明文。其中加密和解密使用的是同一个密钥，这种模式称为“<a href="http://zh.wikipedia.org/wiki/%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86" target="_blank" rel="external">对称密码系统</a>”。显然，对称密码系统很容易理解，从技术层面上来讲也比较容易实现，但这种系统存在一个极为棘手的问题，即如何安全地保存和传递密钥，毕竟保存和传递本身也有可能被攻击或窃听。</p>
+<a id="more"></a>
+<p>1974年，正在UC Berkeley读本科的Ralph Merkle在一次讨论课上提出了一种被称作<a href="http://en.wikipedia.org/wiki/Ralph_Merkle_puzzle_cryptographic_system" target="_blank" rel="external">Merkle’s Puzzles</a>（Merkle难题）的密码系统，其基本思路是Bob首先向Alice发去大量的难题，其中每一个难题本身都可以用蛮力算法在有限的时间内破解，得到的答案就是一个可用的密钥；Alice收到难题后随机选取一道进行破解，之后采用得到的密钥对一段双方事先约定好的信息进行加密（这段信息无需保密，甚至也不需要事先约定，可以在通讯开始之前先用明文直接发过去，之后再解题和加密），并将密文发给Bob；由于所有的难题都是Bob编制的，因此他应当知道所有谜题的答案（即所有可能的密钥），Bob收到密文后只需要用这些密钥一一尝试解密即可，如此操作即可保证Alice和Bob得到相同的密钥。而窃听者Eve即便可以窃听到Alice和Bob之间所有的通讯也无法完成解密，由于她不知道Alice破解的是哪一条谜题，故只能尝试破解掉所有的谜题；如果谜题数量足够大，则Eve在足够长的时间内都不可能获得真正的密钥（此处还要求Eve在知道明文和密文的情况下不能反推出密钥）。可以看出Merkle难题不同于以往的对称密码系统，在整个过程中并不需要显式地传递双方真正使用的密钥。当然，发送“大量难题”本身并不十分现实，这会受到网络带宽、传输速度、储存容量等实际因素的制约；不过，Merkle难题仍旧具有十分重要的意义，可以说它是<a href="http://zh.wikipedia.org/wiki/%E9%9D%9E%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86%E6%BC%94%E7%AE%97%E6%B3%95" target="_blank" rel="external">非对称密码系统</a>（即公钥密码系统）的雏形。</p>
+<p>1976年，Whitfield Diffie和Martin Hellman提出了<a href="http://en.wikipedia.org/wiki/Diffie%E2%80%93Hellman_key_exchange" target="_blank" rel="external">Diffie–Hellman key exchange</a>（Diffie–Hellman密钥交换协议），这标志着非对称密码系统的正式诞生。Diffie–Hellman密钥交换协议的主要思想是借助<a href="http://en.wikipedia.org/wiki/Trapdoor_function" target="_blank" rel="external">trapdoor function</a>（暗门函数）产生公钥和私钥，这类函数的特点是按一个方向运算很容易，但反过来做运算则十分困难，最经典的暗门函数就是大数的分解质因数：给定两个<a href="http://zh.wikipedia.org/wiki/%E7%B4%A0%E6%95%B0" target="_blank" rel="external">质数</a>（即素数），计算它们的乘积很容易；但给定一个很大的<a href="http://zh.wikipedia.org/wiki/%E5%90%88%E6%95%B0" target="_blank" rel="external">合数</a>，要求将其分解为素数的乘积却十分困难。因此，Bob可以用一个非常大的合数作为公钥，并将其公之于众，所有想给Bob发信息的人（如Alice）都应使用此公钥进行加密；Bob以该合数的其中一个质因数为私钥，在其收到密文后使用该私钥解密（当然，这里还需要有一系列经过巧妙设计的算法以实现非对称的加密和解密）。对于Bob而言，他可以先选定两个素数，再计算其乘积作为公钥；但对于攻击者而言，在只知道乘积（合数，即公钥）的情况下想反过来得到质因数（即私钥）却十分困难。作为一个形象的比喻，非对称密码系统相当于小区里家门口的信箱，任何人都可以通过箱口（公钥）向里面投入信件，但只有户主能用自己的钥匙（私钥）打开信箱获取信息。</p>
+<p>1977年，日后风靡世界的RSA加密算法终于横空出世，其发明者是当时在MIT工作的三位密码学大牛Ron Rivest、Adi Shamir和Leonard Adleman，“RSA”这个名称实际上就来自于三人姓氏的首字母（必须说明的是，就职于英国政府通信总局的数学家Clifford Cocks曾在1973年的一篇内部文章中提及同样的算法，但他的这一发现被列为政府机密，直到1997年才得以公开发表）。经历数十年的发展，RSA已经成为应用最广泛的非对称密码系统。截止到目前（2014年），人们所能破解的RSA加密系统的最长公钥位数为768位（<a href="http://en.wikipedia.org/wiki/RSA-768#RSA-768" target="_blank" rel="external">RSA-768</a>，2009年12月破解），而实际使用的RSA公钥长度通常为1024位或2048位（这里的“位数”均代表二进制位）。</p>
+<p>下面就是对于RSA算法的详细介绍：</p>
+<h2 id="预备知识（基础数论）">预备知识（基础数论）</h2>
+<p>对于正整数$N$，定义集合$Z_{N}=\lbrace0,1,2,\dots,N-1\rbrace$，同时定义集合上的两种运算：模加、模乘，这两种运算与普通的加法、乘法类似，只是多了一步取模$N$而已，例如在$Z_{12}$上有运算<br>$$<br>9+8=5\,(\mathrm{mod}\,12)\\<br>5\times7=11\,(\mathrm{mod}\,12)<br>$$<br>从抽象代数的角度来看，这样定义的集合$Z_{N}$及模加、模乘运算构成了一个<a href="http://zh.wikipedia.org/wiki/%E7%8E%AF_(%E4%BB%A3%E6%95%B0)" target="_blank" rel="external">环</a>。对于$Z_{N}$中的元素$a$而言，如果存在元素$b\in{}Z_{N}$使得$\,a\cdot{}b=1\,(\mathrm{mod}\,N)$，则称$a$和$b$互为对方的逆或<a href="http://zh.wikipedia.org/wiki/%E6%A8%A1%E5%8F%8D%E5%85%83%E7%B4%A0" target="_blank" rel="external">模反元素</a>，同时称二者在$Z_{N}$中均为可逆元素。严格的数学推导可以证明，对于给定集合$Z_{N}$，其中的某元素是可逆元素，当且仅当该元素与$N$<a href="http://zh.wikipedia.org/wiki/%E4%BA%92%E8%B3%AA" target="_blank" rel="external">互质</a>。比如$Z_{12}$中只有$\lbrace1,5,7,11\rbrace$才是可逆元素；假定$p$为质数，则$Z_{p}$中所有非零元素均可逆。</p>
+<p>对于$Z_{N}$，我们选取其所有可逆的元素组成子集合$Z_{N}^{\ast}$。关于$Z_{N}^{\ast}$有几条非常重要的内容，首先是<a href="http://zh.wikipedia.org/wiki/%E8%B4%B9%E9%A9%AC%E5%B0%8F%E5%AE%9A%E7%90%86" target="_blank" rel="external">费马（Fermat）小定理</a>：设$p$为素数，则有<br>$$<br>\forall{}x\in{}Z_{p}^{\ast},\ \ x^{p-1}=1\,(\mathrm{mod}\,p)\ \textrm{,}\ x^{p}=x\,(\mathrm{mod}\,p)<br>$$</p>
+<p>其次是<a href="http://zh.wikipedia.org/wiki/%E6%AC%A7%E6%8B%89%E5%95%86%E6%95%B0" target="_blank" rel="external">欧拉$\phi$函数</a>（或称为欧拉商数）。对于正整数$n$，定义其欧拉$\phi$函数为$\phi(n)=\vert Z_{N}^{\ast}\vert$，换言之，$\phi(n)$就是不大于$n$且与$n$互质的正整数的数目，譬如$\phi(12)=4$。显而易见如果$p$是素数，则$\phi(p)=p-1$。假设合数$N$可分解为两个素数$p$和$q$相乘（$N=pq$），则可证明$\phi(N)=N-p-q+1=(p-1)(q-1)$。</p>
+<p>最后是<a href="http://zh.wikipedia.org/wiki/%E6%AC%A7%E6%8B%89%E5%AE%9A%E7%90%86_(%E6%95%B0%E8%AE%BA)" target="_blank" rel="external">欧拉（Euler）定理</a>：<br>$$<br>\forall{}x\in{}Z_{N}^{\ast},\ \ x^{\phi(N)}=1\,(\mathrm{mod}\,N)<br>$$<br>可以看出欧拉定理实际上是费马小定理的推广形式，欧拉定理并不要求$N$为素数，而只要$x$与$N$互质即可。欧拉定理非常重要，事实上这就是整个RSA加密算法的核心。</p>
+<h2 id="具体算法流程">具体算法流程</h2>
+<ol>
+<li>接收方选取两个足够大的相异素数$p$、$q$，计算乘积$N=pq$，同时得到$\phi(N)=(p-1)(q-1)$</li>
+<li>接收方选取正整数$e$、$d$使$e\cdot{}d=1\,(\mathrm{mod}\,\phi(N))$（$e$被称作“加密指数”，$d$被称作“解密指数”）</li>
+<li>接收方公布公钥$pk=(N,e)$，保留私钥$sk=(N,d)$，销毁$p$、$q$和$\phi(N)$</li>
+<li>发送方使用公钥$pk$对明文$m$进行加密：$c=m^{e}\,(\mathrm{mod}\,N)$（明文$m$必须是小于$N$的整数；如果明文是字符串，则应当先将其转换为<a href="http://zh.wikipedia.org/wiki/Unicode" target="_blank" rel="external">Unicode编码</a>或<a href="http://zh.wikipedia.org/wiki/ASCII" target="_blank" rel="external">ASCII编码</a>）</li>
+<li>接收方使用私钥$sk$对密文$c$进行解密：$c^{d}=m^{ed}=m\,(\mathrm{mod}\,N)$</li>
+</ol>
+<p>以上就是RSA加密和解密的算法，其中最后一步$m^{ed}=m\,(\mathrm{mod}\,N)$等式的成立性需要分两种情况说明：</p>
+<ul>
+<li>$m$与$N$互质：由欧拉定理直接得到$m^{ed}=m^{k\phi(N)+1}=(m^{\phi(N)})^{k}\cdot{}m=m\,(\mathrm{mod}\,N)$。</li>
+<li>$m$不与$N$互质：$m^{ed}=m^{k\phi(N)+1}=m\cdot m^{k\phi(N)}=m\cdot (m^{p-1})^{k(q-1)}$，欧拉定理表明$m^{p-1}=1\,(\mathrm{mod}\,p)$，根据模运算的基本性质可得$m\cdot (m^{p-1})^{k(q-1)}=m\,(\mathrm{mod}\,p)$，即$m^{ed}=m\,(\mathrm{mod}\,p)$，同理可得$m^{ed}=m\,(\mathrm{mod}\,q)$。由于$p$和$q$是相异的素数，故必有$m^{ed}=m\,(\mathrm{mod}\,N)$。</li>
+</ul>
+<p>另外，在第2步生成$(e,d)$时，具体做法是先人为指定$e$（通常推荐65537），然后再利用<a href="http://zh.wikipedia.org/wiki/%E6%89%A9%E5%B1%95%E6%AC%A7%E5%87%A0%E9%87%8C%E5%BE%97%E7%AE%97%E6%B3%95" target="_blank" rel="external">扩展欧几里得算法</a>计算$d$。扩展欧几里得算法的时间复杂度为$O(\log^{2}\phi(N))$（当$N$足够大时，$\phi(N)\approx{}N$），源代码如下（Python 3）：</p>
+<figure class="highlight python3"><figcaption><span>extended Euclidean algorithm</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">Extend_Euclid</span><span class="params">(e, phi)</span>:</span></div><div class="line">    <span class="keyword">if</span> phi == <span class="number">0</span>: </div><div class="line">        <span class="keyword">return</span> (<span class="number">1</span>, <span class="number">0</span>)</div><div class="line">    <span class="keyword">else</span>:</div><div class="line">        (x, y) = Extend_Euclid(phi, e % phi)</div><div class="line">        (x, y) = (y, (x - (e / phi) * y))</div><div class="line">        <span class="keyword">return</span> (x, y)</div></pre></td></tr></table></figure>
+
+<p>返回值<code>(x, y)</code>应当使<code>x * e + y * phi == 1</code>表达式结果为<code>True</code>，其中<code>x</code>就是我们需要的$d$。在实际编程时需要考虑到RSA密钥较长，直接使用Python内置的int类型会导致程序性能低下，推荐使用<a href="https://pypi.python.org/pypi/gmpy2" target="_blank" rel="external">gmpy2</a>库来处理。</p>
+<h2 id="注意事项">注意事项</h2>
+<p>上面所介绍的RSA算法<strong>不能</strong>直接用于加密实际信息，很多教材和资料往往忽视了这一点。严格来讲，此处介绍的RSA算法并不符合<a href="http://zh.wikipedia.org/wiki/%E8%AF%AD%E4%B9%89%E5%AE%89%E5%85%A8" target="_blank" rel="external">语义安全</a>的要求，因为该算法的每个步骤完全是确定性的，不包含任何随机性成分。针对直接使用RSA算法加密的信息，窃听者可以通过<a href="http://en.wikipedia.org/wiki/Meet-in-the-middle_attack" target="_blank" rel="external">meet-in-the-middle attack</a>大幅降低破解密码所需的时间：假定直接采用RSA加密明文$m$，同时假定$m$长度为64位。统计表明在大约20%的情况下，64位的明文$m$可分解为$m=m_{1}\cdot{}m_{2}$，且$m_{1},m_{2}&lt;2^{34}$，则密文为$c=m^{e}=m_{1}^{e}\cdot{}m_{2}^{e}\,(\mathrm{mod}\,N)$，同时有$c/m_{1}^{e}=m_{2}^{e}\,(\mathrm{mod}\,N)$。窃听者在得知密文$c$的情况下针对$m_{1}$所有可取的值逐一计算并记录$c/m_{1}^{e}$（即$\lbrace{}c/1^{e},c/2^{e},c/3^{e},\dots,c/2^{34e}\rbrace$），然后遍历检查$m_{2}$所有可取的值（即$\lbrace{}1,2,\dots,2^{34}\rbrace$），如果遇到$c/m_{1}^{e}=m_{2}^{e}\,(\mathrm{mod}\,N)$，则窃听者找到了匹配的$(m_{1},m_{2})$并可得到明文$m=m_{1}\cdot{}m_{2}$。考虑时间复杂度，创建表格需要$2^{34}$，之后查找也需要$2^{34}$（假定窃听者有足够的空间可以建立hash散列表），则窃听者破解密码的总时间为$2^{35}$，远远小于蛮力穷举$m$所需要的$2^{64}$，因而可以认为窃听者找到了有效的破解手段，相应的加密方法不安全。</p>
+<p>RSA加密的ISO标准中规定RSA算法应当与能够校验信息的对称加密系统配合使用，具体来说就是发送方首先从RSA的$Z_{N}$中选取一个随机数，对其使用hash函数（<a href="http://en.wikipedia.org/wiki/SHA-256" target="_blank" rel="external">SHA-256</a>）得到对称加密系统所需的密钥，同时使用RSA算法对该随机数进行加密，将这两个加密结果一并发送；接收方收到密文后首先使用RSA的私钥解密得到发送方选取的随机数，再通过hash函数得到对称加密系统的密钥，最终解密得到明文。</p>
+<p>在实际使用中，包含RSA算法的加密系统一般会采用<a href="http://en.wikipedia.org/wiki/PKCS_1" target="_blank" rel="external">PKCS1标准</a>，该标准与ISO标准略有不同：发送方首先生成一个密钥并使用对称加密系统进行加密，之后按照PKCS1标准对密钥做一定处理并采用RSA算法对其加密，然后将两个加密结果一并发送；接收方收到密文后，首先采用RSA算法解密，之后按照PKCS1标准逆处理得到密钥，最后使用对称加密系统解密得到明文。其中关键在于使用RSA加密前如何处理对称加密系统的密钥，该步骤称为“预处理（preprocessing）”，不同版本的PKCS1标准规定也不同，总体思路都是将较短的密钥扩展为足够长的二进制串，比如PKCS1 v1.5的规定是将对称加密系统的密钥（128位或256位）与一定长度的随机数串和特定位置上的标识符（如“00”、“FF”等）首尾相连构成2048位的二进制串，然后再交由RSA算法加密；PKCS1 v2.0则更加复杂，其中使用了hash函数（SHA-256）以及<a href="http://zh.wikipedia.org/wiki/%E5%BC%82%E6%88%96" target="_blank" rel="external">异或</a>（xor）运算等，同时也包含随机数串和标识符等。</p>
+<p>另外，使用RSA加密算法时还需要注意不能使$p$和$q$过于接近，否则攻击者可以从$\sqrt{N}$出发进行遍历搜索，经过不长时间即可确定$p$和$q$从而破解RSA加密，下面就是一个反例：</p>
+<figure class="highlight python3"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attribute">N </span>=<span class="string"> 648455842808071669662824265346772278726343720706976263060439070378797308618081116462714015276061417569195587321840254520655424906719892428844841839353281972988531310511738648965962582821502504990264452100885281673303711142296421027840289307657458645233683357077834689715838646088239640236866252211790085787877</span></div></pre></td></tr></table></figure>
+
+<p>这里的<code>N</code>非常大，换算为二进制后长度为1026位，已经超过了RSA-768，达到实用 RSA 加密系统的长度；但其质因数<code>p</code>和<code>q</code>过于接近，因而攻击者可以在非常短的时间内找出这两个质因数：</p>
+<figure class="highlight python3"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="variable">p =</span> <span class="number">25464796146996183438008816563973942229341454268524157846328581927885777970106398054491246526970814167632563509541784734741871379856682354747718346471375403</span></div><div class="line"></div><div class="line"><span class="variable">q =</span> <span class="number">25464796146996183438008816563973942229341454268524157846328581927885777969985222835143851073249573454107384461557193173304497244814071505790566593206419759</span></div><div class="line"></div><div class="line"><span class="comment"># 二者差值 (p - q) = 121175219347395453721240713525179047984591561437374135042610848957151753264955644</span></div></pre></td></tr></table></figure>
+
+<p>在使用Python和gmpy2的条件下，普通的个人笔记本电脑破解这个反例中的<code>N = p * q</code>只需不到0.2秒的时间。</p>
+<h2 id="再谈质因数分解及数论">再谈质因数分解及数论</h2>
+<p>在数学中恐怕很少有哪个问题像质因数分解这样简单但又令人着迷，任何一个小学文化程度的人都可以理解素数以及质因数分解的基本概念，同时又有诸多伟大的数学家和计算机科学家在为其倾注心力。到目前为止我们仍不敢断言自己已经完全了解了质因数分解这个问题，我们只知道大数的质因数分解非常困难，但我们并不清楚它到底有多困难，比如是否存在多项式时间复杂度的分解算法（是否属于P复杂度）。目前效率最高的算法是<a href="http://zh.wikipedia.org/wiki/%E6%99%AE%E9%80%9A%E6%95%B0%E5%9F%9F%E7%AD%9B%E9%80%89%E6%B3%95" target="_blank" rel="external">普通数域筛法</a>，其运行时间高于多项式时间，但低于指数时间，我们尚不知道是否存在更优的算法。</p>
+<p>1994年，美国计算机科学家Peter Shor提出了一种出人意料的算法，即<a href="http://zh.wikipedia.org/wiki/%E7%A7%80%E7%88%BE%E6%BC%94%E7%AE%97%E6%B3%95" target="_blank" rel="external">量子质因数分解算法</a>（又称Shor算法），该算法可以在多项式时间内完成大数的质因数分解，因而被看做该领域的一个重大突破；但Shor算法本质上是一个<a href="http://en.wikipedia.org/wiki/Quantum_algorithm" target="_blank" rel="external">量子算法</a>，不属于经典<a href="http://zh.wikipedia.org/wiki/%E5%9B%BE%E7%81%B5%E6%9C%BA" target="_blank" rel="external">图灵机</a>上的算法，只能在<a href="http://zh.wikipedia.org/wiki/%E9%87%8F%E5%AD%90%E8%A8%88%E7%AE%97%E6%A9%9F" target="_blank" rel="external">量子计算机</a>上运行。截止到目前（2014年），关于量子计算是否可行、量子计算机是否可实现等问题尚存在争议，IBM曾于2001年搭建了一台基于<a href="http://zh.wikipedia.org/wiki/%E6%A0%B8%E7%A3%81%E5%85%B1%E6%8C%AF" target="_blank" rel="external">核磁共振技术</a>的小型量子计算机并使用Shor算法将15分解为3和5的乘积，但有批评者认为这次实验其实并不是量子计算的真实演示。</p>
+<p>总而言之，今天的我们仍旧可以对RSA等依赖于质因数分解的加密算法感到放心，包括量子计算在内，尚没有任何破解方法能够达到实用水平。但未来一切皆有可能，也许会有人发现可在经典图灵机上运行的多项式时间复杂度的质因数分解算法，也许有一天量子计算机和Shor算法会达到大规模商业化部署的水平。不论最终如何，这些潜在的可能性都始终激励着我们在相关领域中不断探索。</p>
+<p>在数论领域中做出过巨大贡献的英国著名数学家<a href="http://zh.wikipedia.org/wiki/G%C2%B7H%C2%B7%E5%93%88%E4%BB%A3" target="_blank" rel="external">哈代</a>（Godfrey Harold Hardy）曾认为最美的数学应当没有任何实用价值，即所谓的“纯数学（pure mathematics）”，因此他对于自己钟爱一生的数论感到满意，因为在那个时代，数论几乎就是屠龙之术。在晚年著作《一个数学家的辩白》中，哈代这样写道：</p>
+<blockquote>
+<p>到目前为止，还尚未有人能够发现数论和相对论用于任何与战争有关的目的，而且在今后许多年，也不太可能会有人能够做到这一点。</p>
+<p>No one has yet discovered any warlike purpose to be served by the theory of numbers or relativity, and it seems unlikely that anyone will do so for many years.</p>
+</blockquote>
+<p>然而事实上，就在哈代写下这句话的1940年，他的剑桥小学弟、伟大的计算机科学先驱<a href="http://zh.wikipedia.org/wiki/%E5%9B%BE%E7%81%B5" target="_blank" rel="external">图灵</a>正在利用同样看似无用的数理逻辑和群论破解着纳粹德国的<a href="http://zh.wikipedia.org/wiki/Enigma" target="_blank" rel="external">Engima</a>，大洋彼岸的美国人也已经开始把玄虚飘渺的相对论和量子力学应用于制造原子弹的<a href="http://zh.wikipedia.org/wiki/%E6%9B%BC%E5%93%88%E9%A1%BF%E8%AE%A1%E5%88%92" target="_blank" rel="external">曼哈顿计划</a>。恐怕更令哈代意想不到的是，虽然普罗大众对数论乃至整个数学仍旧缺乏兴趣，但当今社会实际上已经离不开数论，没有数论，就没有今天的电子商务、网上银行和电子邮件系统；换言之，哈代理想中毫无实用价值的数论正在今天的社会中为我们创造财富、守护隐私、保障安全。</p>
+<h2 id="参考资料">参考资料</h2>
+<ol>
+<li><a href="https://www.coursera.org/course/crypto" target="_blank" rel="external">Cryptography I 课件</a> （作者：Dan Boneh）</li>
+<li><a href="http://www.ruanyifeng.com/blog/2013/06/rsa_algorithm_part_one.html" target="_blank" rel="external">《RSA 算法原理（一）</a>、<a href="http://www.ruanyifeng.com/blog/2013/07/rsa_algorithm_part_two.html" target="_blank" rel="external">（二）》</a> （作者：阮一峰）</li>
+<li><a href="http://www.matrix67.com/blog/archives/5100" target="_blank" rel="external">《跨越千年的RSA算法》</a> （作者：Matrix67）</li>
+<li><a href="http://www.matrix67.com/blog/archives/236" target="_blank" rel="external">《同余运算及其基本性质》</a> （作者：Matrix67）</li>
+<li><a href="http://shoup.net/ntb/" target="_blank" rel="external"><em>A Computational Introduction to Number Theory and Algebra</em></a> （作者：Victor Shoup）</li>
+<li><a href="http://en.wikipedia.org" target="_blank" rel="external">Wikipedia</a></li>
+</ol>
+]]></content>
+         
+         
+           
+             
+              <breadCrumb title="密码学" url="http://sunxb10.github.io/categories/%E5%AF%86%E7%A0%81%E5%AD%A6/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://sunxb10.github.io/2015/01/02/display-math-equations-with-hexo/</loc>
+    <lastmod>2015-03-19T12:23:24.000Z</lastmod>
+    <data>
+        <display>
+        <title>在Hexo中显示数学公式</title>
+        <pubTime>2015-01-02T15:58:05.000Z</pubTime>
+        
+        <tag>数学 </tag>
+         
+        <tag>Hexo </tag>
+         
+         <content><![CDATA[<h2 id="MathJax配置">MathJax配置</h2>
+<p>为显示数学公式，首先需配置<a href="http://www.mathjax.org/" target="_blank" rel="external">MathJax</a>，这是用于渲染和显示数学公式的JavaScript库，能将用户输入的<a href="http://en.wikipedia.org/wiki/LaTeX" target="_blank" rel="external">$\mathrm{\LaTeX}$</a>、<a href="http://en.wikipedia.org/wiki/MathML" target="_blank" rel="external">MathML</a>和<a href="http://en.wikipedia.org/wiki/ASCIIMathML" target="_blank" rel="external">ASCIIMathML</a>指令转换为可在浏览器中显示的数学公式，并且它所渲染输出的数学公式是真正的矢量字符，而不是像维基百科等网站那样使用点阵图片显示公式和符号。</p>
+<a id="more"></a>
+<p>考虑到MathML和ASCIIMathML指令较为繁杂，这里只配置针对$\mathrm{\LaTeX}$指令的渲染。在Hexo博客目录中找到文件<code>/themes/xxxx/layout/_partial/head.ejs</code>（<code>xxxx</code>代表当前使用的主题），在<code>&lt;head&gt;...&lt;/head&gt;</code>标签内帖入如下代码：</p>
+<figure class="highlight html"><figcaption><span>MathJax configuration</span><a href="https://gist.github.com/sunxb10/b410f82fb8bc07e1b76d" target="_blank" rel="external">gist snippet</a></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!-- MathJax Start --&gt;</span></div><div class="line"><span class="comment">&lt;!-- MathJax documentation: http://docs.mathjax.org/en/latest/index.html --&gt;</span></div><div class="line"><span class="tag">&lt;<span class="title">script</span> <span class="attribute">type</span>=<span class="value">"text/x-mathjax-config"</span>&gt;</span><span class="javascript"></span></div><div class="line">  MathJax.Hub.Config({</div><div class="line">    tex2jax: {  <span class="comment">// tex2jax preprocessor</span></div><div class="line">      inlineMath: [ [<span class="string">'$'</span>,<span class="string">'$'</span>] ],  <span class="comment">// delimiters for in-line math</span></div><div class="line">      displayMath: [ [<span class="string">'$$'</span>,<span class="string">'$$'</span>] ],  <span class="comment">// delimiters for displayed equations</span></div><div class="line">      processEscapes: <span class="literal">true</span>,  <span class="comment">// enable \$ to represent a single dollar sign</span></div><div class="line">      skipTags: [<span class="string">'script'</span>, <span class="string">'noscript'</span>, <span class="string">'style'</span>, <span class="string">'textarea'</span>, <span class="string">'pre'</span>, <span class="string">'code'</span>]  <span class="comment">// MathJax will not process contents inside these tags </span></div><div class="line">    },</div><div class="line">    TeX: {  <span class="comment">// TeX/LaTeX input processor</span></div><div class="line">      equationNumbers: { autoNumber: <span class="string">"AMS"</span> },  <span class="comment">// only number those equations in specific AMSmath environments</span></div><div class="line">      extensions: [<span class="string">"AMSmath.js"</span>,<span class="string">"AMSsymbols.js"</span>,<span class="string">"noErrors.js"</span>,<span class="string">"noUndefined.js"</span>]  <span class="comment">// introduce AMS extensions and suppress generating error messages </span></div><div class="line">    },</div><div class="line">    <span class="string">"HTML-CSS"</span>: {  <span class="comment">// HTML-CSS output processor (this is the default output of MathJax)</span></div><div class="line">      scale: <span class="number">110</span>,  <span class="comment">// The scaling factor of math with respect to the surrounding text</span></div><div class="line">      linebreaks: { automatic: <span class="literal">true</span> } <span class="comment">// automatically breaks the line if necessary</span></div><div class="line">    },</div><div class="line">    SVG: {  <span class="comment">// SVG output processor</span></div><div class="line">      scale: <span class="number">110</span>,  <span class="comment">// The scaling factor of math with respect to the surrounding text</span></div><div class="line">      linebreaks: { automatic: <span class="literal">true</span> } <span class="comment">// automatically breaks the line if necessary</span></div><div class="line">    },</div><div class="line">    menuSettings: {  <span class="comment">// settings for the mathematics contextual menu</span></div><div class="line">      zoom: <span class="string">"Hover"</span>  <span class="comment">// set equation zooming to be triggered by a single mouse click</span></div><div class="line">    }</div><div class="line">  });</div><div class="line"> </div><div class="line">  MathJax.Hub.Queue(<span class="function"><span class="keyword">function</span><span class="params">()</span> </span>{ <span class="comment">// Fix &lt;code&gt; tags after MathJax finishes running, this is a hack to overcome a shortcoming of Markdown</span></div><div class="line">      <span class="keyword">var</span> all = MathJax.Hub.getAllJax(), i;</div><div class="line">      <span class="keyword">for</span>(i=<span class="number">0</span>; i &lt; all.length; i += <span class="number">1</span>) {</div><div class="line">          all[i].SourceElement().parentNode.className += <span class="string">' has-jax'</span>;</div><div class="line">      }</div><div class="line">  });</div><div class="line"><span class="tag">&lt;/<span class="title">script</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="title">script</span> <span class="attribute">type</span>=<span class="value">"text/javascript"</span></span></div><div class="line">   <span class="attribute">src</span>=<span class="value">"http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"</span>&gt;<span class="javascript">  <span class="comment">// link to the MathJax CDN</span></span></div><div class="line"><span class="tag">&lt;/<span class="title">script</span>&gt;</span></div><div class="line"><span class="comment">&lt;!-- MathJax End --&gt;</span></div></pre></td></tr></table></figure>
+
+<p>其中各项设置的具体作用可参见<a href="http://docs.mathjax.org/en/latest/" target="_blank" rel="external">官方文档</a>，用户也可根据需要自行修改，下面的示例都将基于上面的MathJax配置实现。</p>
+<h2 id="行内公式与行间公式">行内公式与行间公式</h2>
+<p>使用<code>$...$</code>输入行内公式（inline-style math）：</p>
+<ul>
+<li><p>输入：<code>$E = m c^{2}$</code></p>
+<p>输出：$E = m c^{2}$</p>
+</li>
+<li><p>输入：<code>$a^{2} + b^{2} = c^{2}$</code></p>
+<p>输出：$a^{2} + b^{2} = c^{2}$</p>
+</li>
+</ul>
+<p>使用<code>$$...$$</code>输入行间公式（display-style math）：</p>
+<ul>
+<li><p>输入：<code>$$f(x) = \frac{1}{\sigma\sqrt{2\pi}}e^{-\frac{(x-\mu)^{2}}{2\sigma^{2}}}$$</code></p>
+<p>输出：$$f(x) = \frac{1}{\sigma\sqrt{2\pi}}e^{-\frac{(x-\mu)^{2}}{2\sigma^{2}}}$$</p>
+</li>
+<li><p>输入：<code>$$v=\frac{\Delta s}{\Delta t}$$</code></p>
+<p>输出：$$v=\frac{\Delta s}{\Delta t}$$</p>
+</li>
+</ul>
+<h2 id="特殊符号与公式换行">特殊符号与公式换行</h2>
+<p>若用户输入的$\mathrm{\LaTeX}$代码中包含Markdown的特殊符号（如<code>_</code>、<code>*</code>），则公式渲染会因Markdown解析而导致错误：</p>
+<ul>
+<li><p>输入：<code>$$f_{n}=f_{n-1}+f_{n-2}$$</code></p>
+<p>输出：$$f<em>{n}=f</em>{n-1}+f_{n-2}$$</p>
+</li>
+</ul>
+<p>解决办法是在这些特殊符号前加转义符号<code>\</code>以规避 Markdown 解析：</p>
+<ul>
+<li><p>输入：<code>$$f\_{n}=f\_{n-1}+f\_{n-2}$$</code></p>
+<p>输出：$$f_{n}=f_{n-1}+f_{n-2}$$</p>
+</li>
+</ul>
+<p>但<code>\</code>同时也是$\mathrm{\LaTeX}$的特殊符号，所以在多行公式换行时必须用<code>\\\</code>而不是<code>\\</code>：</p>
+<ul>
+<li>输入：</li>
+</ul>
+<figure class="highlight latex"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="formula">$$</span></div><div class="line"><span class="command">\mathrm</span><span class="special">{</span>e<span class="special">}</span>^<span class="special">{</span>i<span class="command">\theta</span><span class="special">}</span>=<span class="command">\cos</span><span class="command">\theta</span>+i<span class="command">\sin</span><span class="command">\theta</span><span class="command">\\</span></div><div class="line"><span class="command">\mathrm</span><span class="special">{</span>e<span class="special">}</span>^<span class="special">{</span>i<span class="command">\pi</span><span class="special">}</span>+1=0</div><div class="line">$$</div></pre></td></tr></table></figure>
+
+<p>  输出：<br>  $$<br>  \mathrm{e}^{i\theta}=\cos\theta+i\sin\theta\<br>  \mathrm{e}^{i\pi}+1=0<br>  $$</p>
+<ul>
+<li>输入：</li>
+</ul>
+<figure class="highlight latex"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="formula">$$</span></div><div class="line"><span class="command">\mathrm</span><span class="special">{</span>e<span class="special">}</span>^<span class="special">{</span>i<span class="command">\theta</span><span class="special">}</span>=<span class="command">\cos</span><span class="command">\theta</span>+i<span class="command">\sin</span><span class="command">\theta</span><span class="command">\\</span><span class="command">\</span></div><div class="line"><span class="command">\mathrm</span><span class="special">{</span>e<span class="special">}</span>^<span class="special">{</span>i<span class="command">\pi</span><span class="special">}</span>+1=0</div><div class="line">$$</div></pre></td></tr></table></figure>
+
+<p>  输出：<br>  $$<br>  \mathrm{e}^{i\theta}=\cos\theta+i\sin\theta\\<br>  \mathrm{e}^{i\pi}+1=0<br>  $$</p>
+<p>另外，由于<code>$</code>已被当做行内公式的定界符，如果需要输入单独的美元符号，应输入<code>\$</code>，即得到\$。</p>
+<h2 id="数学环境">数学环境</h2>
+<p>$\mathrm{\LaTeX}$提供了<code>equation</code>、<code>align</code>、<code>eqnarray</code>等用于排版复杂公式的数学环境，在Hexo中可以直接使用这些数学环境，不需要将其置于<code>$...$</code>或<code>$$...$$</code>之间，因此实际上可以用这些数学环境取代前面介绍的<code>$$...$$</code>行间公式：</p>
+<ul>
+<li>输入：</li>
+</ul>
+<figure class="highlight latex"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="command">\begin</span><span class="special">{</span>equation<span class="special">}</span></div><div class="line">f<span class="command">\_</span><span class="special">{</span>0<span class="special">}</span> = 1<span class="command">\\</span><span class="command">\</span></div><div class="line">f<span class="command">\_</span><span class="special">{</span>1<span class="special">}</span> = 1<span class="command">\\</span><span class="command">\</span></div><div class="line">f<span class="command">\_</span><span class="special">{</span>n<span class="special">}</span> = f<span class="command">\_</span><span class="special">{</span>n-1<span class="special">}</span> + f<span class="command">\_</span><span class="special">{</span>n-2<span class="special">}</span><span class="command">\quad</span> (n&gt;1)</div><div class="line"><span class="command">\end</span><span class="special">{</span>equation<span class="special">}</span></div></pre></td></tr></table></figure>
+
+<p>  输出：<br>  \begin{equation}<br>  f_{0} = 1\\<br>  f_{1} = 1\\<br>  f_{n} = f_{n-1} + f_{n-2}\quad (n&gt;1)<br>  \end{equation}</p>
+<ul>
+<li>输入：</li>
+</ul>
+<figure class="highlight latex"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="command">\begin</span><span class="special">{</span>align<span class="special">}</span></div><div class="line"><span class="command">\begin</span><span class="special">{</span>vmatrix<span class="special">}</span></div><div class="line">1 <span class="special">&</span> 1 <span class="special">&</span> 1 <span class="special">&</span> <span class="command">\cdots</span> <span class="special">&</span> 1 <span class="command">\\</span><span class="command">\</span></div><div class="line">a<span class="command">\_</span><span class="special">{</span>1<span class="special">}</span> <span class="special">&</span> a<span class="command">\_</span><span class="special">{</span>2<span class="special">}</span> <span class="special">&</span> a<span class="command">\_</span><span class="special">{</span>3<span class="special">}</span> <span class="special">&</span> <span class="command">\cdots</span> <span class="special">&</span> a<span class="command">\_</span><span class="special">{</span>n<span class="special">}</span> <span class="command">\\</span><span class="command">\</span></div><div class="line">a<span class="command">\_</span><span class="special">{</span>1<span class="special">}</span>^<span class="special">{</span>2<span class="special">}</span> <span class="special">&</span> a<span class="command">\_</span><span class="special">{</span>2<span class="special">}</span>^<span class="special">{</span>2<span class="special">}</span> <span class="special">&</span> a<span class="command">\_</span><span class="special">{</span>3<span class="special">}</span>^<span class="special">{</span>2<span class="special">}</span> <span class="special">&</span> <span class="command">\cdots</span> <span class="special">&</span> a<span class="command">\_</span><span class="special">{</span>n<span class="special">}</span>^<span class="special">{</span>2<span class="special">}</span> <span class="command">\\</span><span class="command">\</span></div><div class="line">a<span class="command">\_</span><span class="special">{</span>1<span class="special">}</span>^<span class="special">{</span>3<span class="special">}</span> <span class="special">&</span> a<span class="command">\_</span><span class="special">{</span>2<span class="special">}</span>^<span class="special">{</span>3<span class="special">}</span> <span class="special">&</span> a<span class="command">\_</span><span class="special">{</span>3<span class="special">}</span>^<span class="special">{</span>3<span class="special">}</span> <span class="special">&</span> <span class="command">\cdots</span> <span class="special">&</span> a<span class="command">\_</span><span class="special">{</span>n<span class="special">}</span>^<span class="special">{</span>3<span class="special">}</span> <span class="command">\\</span><span class="command">\</span></div><div class="line"><span class="command">\vdots</span> <span class="special">&</span> <span class="command">\vdots</span> <span class="special">&</span> <span class="command">\vdots</span> <span class="special">&</span> <span class="command">\ddots</span> <span class="special">&</span> <span class="command">\vdots</span> <span class="command">\\</span><span class="command">\</span></div><div class="line">a<span class="command">\_</span><span class="special">{</span>1<span class="special">}</span>^<span class="special">{</span>n−1<span class="special">}</span> <span class="special">&</span> a<span class="command">\_</span><span class="special">{</span>2<span class="special">}</span>^<span class="special">{</span>n−1<span class="special">}</span> <span class="special">&</span> a<span class="command">\_</span><span class="special">{</span>3<span class="special">}</span>^<span class="special">{</span>n−1<span class="special">}</span> <span class="special">&</span> <span class="command">\cdots</span> <span class="special">&</span> a<span class="command">\_</span><span class="special">{</span>n<span class="special">}</span>^<span class="special">{</span>n−1<span class="special">}</span></div><div class="line"><span class="command">\end</span><span class="special">{</span>vmatrix<span class="special">}</span> = <span class="command">\prod</span><span class="command">\_</span><span class="special">{</span>1<span class="command">\leqslant</span><span class="special">{</span><span class="special">}</span>j &lt; i<span class="command">\leqslant</span><span class="special">{</span><span class="special">}</span>n<span class="special">}</span>(a<span class="command">\_</span><span class="special">{</span>i<span class="special">}</span>−a<span class="command">\_</span><span class="special">{</span>j<span class="special">}</span>) </div><div class="line"><span class="command">\end</span><span class="special">{</span>align<span class="special">}</span></div></pre></td></tr></table></figure>
+
+<p>  输出：<br>  \begin{align}<br>  \begin{vmatrix}<br>  1 &amp; 1 &amp; 1 &amp; \cdots &amp; 1 \\<br>  a_{1} &amp; a_{2} &amp; a_{3} &amp; \cdots &amp; a_{n} \\<br>  a_{1}^{2} &amp; a_{2}^{2} &amp; a_{3}^{2} &amp; \cdots &amp; a_{n}^{2} \\<br>  a_{1}^{3} &amp; a_{2}^{3} &amp; a_{3}^{3} &amp; \cdots &amp; a_{n}^{3} \\<br>  \vdots &amp; \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\<br>  a_{1}^{n−1} &amp; a_{2}^{n−1} &amp; a_{3}^{n−1} &amp; \cdots &amp; a_{n}^{n−1}<br>  \end{vmatrix} = \prod_{1\leqslant{}j &lt; i\leqslant{}n}(a_{i}−a_{j})<br>  \end{align}</p>
+<h2 id="公式引用">公式引用</h2>
+<p>通过MathJax还可以实现$\mathrm{\LaTeX}$引用公式编号的功能：</p>
+<ul>
+<li>输入：</li>
+</ul>
+<figure class="highlight latex"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="command">\begin</span><span class="special">{</span>align<span class="special">}</span></div><div class="line"><span class="special">&</span>e^<span class="special">{</span>i<span class="command">\pi</span><span class="special">}</span> + 1 = 0 <span class="command">\label</span><span class="special">{</span>eq:Euler<span class="special">}</span><span class="command">\\</span><span class="command">\</span></div><div class="line"><span class="special">&</span><span class="command">\hat</span><span class="special">{</span>H<span class="special">}</span><span class="command">\Psi</span> = i<span class="command">\hbar</span><span class="command">\frac</span><span class="special">{</span><span class="command">\partial</span><span class="special">}</span><span class="special">{</span><span class="command">\partial</span> t<span class="special">}</span><span class="command">\Psi</span> <span class="command">\label</span><span class="special">{</span>eq:Schrödinger<span class="special">}</span><span class="command">\\</span><span class="command">\</span></div><div class="line"><span class="special">&</span><span class="command">\sqrt</span><span class="special">{</span>1 + 2<span class="command">\sqrt</span><span class="special">{</span>1 + 3<span class="command">\sqrt</span><span class="special">{</span>1 + 4<span class="command">\sqrt</span><span class="special">{</span>1 + <span class="command">\cdots</span><span class="special">}</span><span class="special">}</span><span class="special">}</span><span class="special">}</span> = 3 <span class="command">\label</span><span class="special">{</span>eq:Ramanujan<span class="special">}</span></div><div class="line"><span class="command">\end</span><span class="special">{</span>align<span class="special">}</span></div></pre></td></tr></table></figure>
+
+<p>  输出：<br>  \begin{align}<br>  &amp;e^{i\pi} + 1 = 0 \label{eq:Euler}\\<br>  &amp;\hat{H}\Psi = i\hbar\frac{\partial}{\partial t}\Psi \label{eq:Schrödinger}\\<br>  &amp;\sqrt{1 + 2\sqrt{1 + 3\sqrt{1 + 4\sqrt{1 + \cdots}}}} = 3 \label{eq:Ramanujan}<br>  \end{align}</p>
+<p>使用<code>\eqref{}</code>即可对带有<code>\label{}</code>的公式进行引用：</p>
+<ol>
+<li><p>输入：<code>\eqref{eq:Euler}式是欧拉公式</code></p>
+<p>输出：\eqref{eq:Euler}式是欧拉公式</p>
+</li>
+<li><p>输入：<code>\eqref{eq:Schrödinger}式是薛定谔方程</code></p>
+<p>输出：\eqref{eq:Schrödinger}式是薛定谔方程</p>
+</li>
+<li><p>输入：<code>\eqref{eq:Ramanujan}式是拉马努金恒等式</code></p>
+<p>输出：\eqref{eq:Ramanujan}式是拉马努金恒等式</p>
+</li>
+</ol>
+<h2 id="公式编号">公式编号</h2>
+<p><code>equation</code>、<code>align</code>和<code>eqnarray</code>环境会为公式自动编号，对应地，$\mathrm{\LaTeX}$也分别提供了不带编号的<code>equation*</code>、<code>align*</code>和<code>eqnarray*</code>环境。但这里不能直接使用这三个不带编号的环境，原因就是这些环境的名称中出现了Markdown的特殊符号<code>*</code>，不难想见解决办法就是在环境名称的<code>*</code>前面加<code>\</code>：</p>
+<ul>
+<li>输入：</li>
+</ul>
+<figure class="highlight latex"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="command">\begin</span><span class="special">{</span>align<span class="command">\*</span><span class="special">}</span></div><div class="line"><span class="special">&</span><span class="command">\nabla</span> <span class="command">\cdot</span> <span class="command">\boldsymbol</span><span class="special">{</span>E<span class="special">}</span> = <span class="command">\frac</span><span class="special">{</span><span class="command">\rho</span><span class="special">}</span><span class="special">{</span><span class="command">\varepsilon</span><span class="command">\_</span><span class="special">{</span>0<span class="special">}</span><span class="special">}</span> <span class="command">\\</span><span class="command">\</span></div><div class="line"><span class="special">&</span><span class="command">\nabla</span> <span class="command">\cdot</span> <span class="command">\boldsymbol</span><span class="special">{</span>B<span class="special">}</span> = 0 <span class="command">\\</span><span class="command">\</span></div><div class="line"><span class="special">&</span><span class="command">\nabla</span> <span class="command">\times</span> <span class="command">\boldsymbol</span><span class="special">{</span>E<span class="special">}</span> = -<span class="command">\frac</span><span class="special">{</span><span class="command">\partial</span><span class="command">\boldsymbol</span><span class="special">{</span>B<span class="special">}</span><span class="special">}</span><span class="special">{</span><span class="command">\partial</span> t<span class="special">}</span> <span class="command">\\</span><span class="command">\</span></div><div class="line"><span class="special">&</span><span class="command">\nabla</span> <span class="command">\times</span> <span class="command">\boldsymbol</span><span class="special">{</span>B<span class="special">}</span> = <span class="command">\mu</span><span class="command">\_</span><span class="special">{</span>0<span class="special">}</span> <span class="command">\boldsymbol</span><span class="special">{</span>J<span class="special">}</span> + <span class="command">\mu</span><span class="command">\_</span><span class="special">{</span>0<span class="special">}</span><span class="command">\varepsilon</span><span class="command">\_</span><span class="special">{</span>0<span class="special">}</span><span class="command">\frac</span><span class="special">{</span><span class="command">\partial</span><span class="command">\boldsymbol</span><span class="special">{</span>E<span class="special">}</span><span class="special">}</span><span class="special">{</span><span class="command">\partial</span> t<span class="special">}</span></div><div class="line"><span class="command">\end</span><span class="special">{</span>align<span class="command">\*</span><span class="special">}</span></div></pre></td></tr></table></figure>
+
+<p>  输出：<br>  \begin{align*}<br>  &amp;\nabla \cdot \boldsymbol{E} = \frac{\rho}{\varepsilon_{0}} \\<br>  &amp;\nabla \cdot \boldsymbol{B} = 0 \\<br>  &amp;\nabla \times \boldsymbol{E} = -\frac{\partial\boldsymbol{B}}{\partial t} \\<br>  &amp;\nabla \times \boldsymbol{B} = \mu_{0} \boldsymbol{J} + \mu_{0}\varepsilon_{0}\frac{\partial\boldsymbol{E}}{\partial t}<br>  \end{align*}</p>
+<p>如果在同一个数学环境中需要给其中一部分公式编号，而另一部分公式不编号，则可以使用自动编号的<code>equation</code>、<code>align</code>和<code>eqnarray</code>环境，然后在不需要编号的公式之后（换行符<code>\\\</code>之前）加上指令<code>\notag</code>：</p>
+<ul>
+<li>输入：</li>
+</ul>
+<figure class="highlight latex"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="command">\begin</span><span class="special">{</span>align<span class="special">}</span></div><div class="line">E <span class="special">&</span>= mc^<span class="special">{</span>2<span class="special">}</span> <span class="command">\notag</span> <span class="command">\\</span><span class="command">\</span></div><div class="line">E <span class="special">&</span>= h<span class="command">\nu</span> <span class="command">\notag</span> <span class="command">\\</span><span class="command">\</span></div><div class="line">m <span class="special">&</span>= h<span class="command">\nu</span>/c^<span class="special">{</span>2<span class="special">}</span></div><div class="line"><span class="command">\end</span><span class="special">{</span>align<span class="special">}</span></div></pre></td></tr></table></figure>
+
+<p>  输出：<br>  \begin{align}<br>  E &amp;= mc^{2} \notag \\<br>  E &amp;= h\nu \notag \\<br>  m &amp;= h\nu/c^{2}<br>  \end{align}</p>
+<h2 id="将公式复制到本地文件">将公式复制到本地文件</h2>
+<p>在MathJax渲染得到的公式上单击鼠标右键弹出菜单，点击<code>Show Math As</code>子菜单中的<code>MathML Code</code>，将得到的MathML代码复制粘贴到本地的Microsoft Word文档中，并把粘贴选项改为“只保留文本”，如此即可得到相应公式，还可以用Microsoft Word自带的公式编辑器做进一步修改。该操作貌似只适用于Microsoft Word 2007之后的版本（即支持<code>.docx</code>格式的版本）。</p>
+<p>同理，在上述<code>Show Math As</code>的子菜单中选择<code>TeX Commands</code>即可得到相应的$\mathrm{\TeX}$代码。</p>
+<h2 id="备注">备注</h2>
+<p>本博客当前使用的<a href="https://github.com/wuchong/jacman" target="_blank" rel="external">Jacman</a>主题已包含MathJax，具体配置在<code>/themes/jacman/layout/_partial/mathjax.ejs</code>文件中，用户可根据需求对其进行修改。若某篇文章需要使用MathJax显示数学公式，则用户只需在相应Markdown文件头部的front-matter内注明<code>mathjax: true</code>即可。</p>
+<p>MathJax库与Markdown解析器之间的相容配合是实现数学公式显示的关键，考虑到Markdown有多种实现和解析器，再加上MathJax库和Markdown解析器自身的升级迭代，上面介绍的这套方法有可能在特定情况下出现某些bug，请诸位谅解。</p>
+]]></content>
+         
+         
+           
+             
+              <breadCrumb title="Hexo" url="http://sunxb10.github.io/categories/Hexo/"/>
+          
+        </display>
+    </data>
+    </url>
+
+</urlset>
