@@ -2,6 +2,552 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
     
+  <url>
+    <loc>http://sunxb10.github.io/2015/03/31/my-first-vim-note/</loc>
+    <lastmod>2015-04-01T15:24:58.000Z</lastmod>
+    <data>
+        <display>
+        <title>Vim初学笔记</title>
+        <pubTime>2015-03-31T04:55:33.000Z</pubTime>
+        
+        <tag>Vim </tag>
+         
+         <content><![CDATA[<h2 id="Vim的模式">Vim的模式</h2>
+<p>按照帮助文档（<code>:help vim-modes</code>）的说法，Vim共有12种模式，包括6种基本模式和6种派生模式；作为初学者，至少要掌握其中5种模式：普通模式（Normal）、插入模式（Insert）、改写模式（Replace）、命令行模式（Cmdline）和可视模式（Visual）。充分了解这5种模式的区别并熟练掌握这些模式间的转换应当是每一位Vim使用者的基本功：<br><a id="more"></a></p>
+<ul>
+<li><strong>普通模式</strong>（Normal）：此模式是Vim最重要最常用的模式，也是其它各模式间转换的中间桥梁。Vim启动后默认即为普通模式，在其它模式下按<code>ESC</code>键可进入普通模式。进入此模式后Vim下方命令行无提示。</li>
+<li><strong>插入模式</strong>（Insert）：此模式下可直接输入所需的文本内容，这可能是初学者最熟悉的模式。在普通模式下按<code>i</code>、<code>I</code>、<code>a</code>、<code>A</code>、<code>o</code>、<code>O</code>、<code>c</code>、<code>C</code>、<code>s</code>或<code>S</code>键可进入插入模式。进入此模式后Vim下方命令行出现提示<code>-- INSERT --</code>。</li>
+<li><strong>改写模式</strong>（Replace）：此模式与插入模式类似，不同之处在于此模式是改写已有文本而非直接插入。在普通模式下按<code>R</code>键可进入改写模式。进入此模式后Vim下方命令行出现提示<code>-- REPLACE --</code>。</li>
+<li><strong>命令行模式</strong>（Cmdline）：此模式下可在Vim下方命令行中输入指令，按回车键后执行。在普通模式下按<code>:</code>、<code>?</code>或<code>/</code>键可进入命令行模式。进入此模式后Vim下方命令行中显示用户输入的指令内容（包括为转换模式而输入的<code>:</code>、<code>?</code>和<code>/</code>）。</li>
+<li><strong>可视模式</strong>（Visual）：此模式下可用光标移动指令高亮选择文本块进行编辑。在普通模式下按<code>v</code>、<code>V</code>或<code>^V</code>可进入可视模式。进入此模式后Vim下方命令行中出现提示<code>-- VISUAL --</code>，此时移动光标即可高亮选择文本，输入任意非移动指令（包括<code>v</code>、<code>V</code>和<code>^V</code>）可返回普通模式。</li>
+</ul>
+<p>上面出现的<code>^V</code>实际上是指组合键<code>Ctrl</code>+<code>V</code>，因为Vim右下方状态栏会以字符<code>^</code>表示用户按下的<code>Ctrl</code>键。另外，对于MS-Windows下的gVim而言，使用<code>Ctrl</code>+<code>V</code>无法正确进入可视模式，因为该组合键被gVim默认映射为粘贴操作。这无疑是一个非常不合适的设定，因为<code>Ctrl</code>+<code>V</code>所进入的是矩形选择的可视模式，该模式允许用户通过移动光标方便高效地选择矩形文本块，故这里强烈建议更改gVim的默认映射设定，具体方法是在gVim的安装目录中打开<code>/vim74/mswin.vim</code>文件，找到如下片段：</p>
+<figure class="highlight VimL"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="string">" CTRL-V and SHIFT-Insert are Paste</span></div><div class="line"><span class="built_in">map</span> &lt;C-V&gt;		<span class="string">"+gP</span></div><div class="line"><span class="built_in">map</span> &lt;S-Insert&gt;		"+gP</div></pre></td></tr></table></figure>
+
+<p>将其修改为</p>
+<figure class="highlight VimL"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">" CTRL-V and SHIFT-<span class="operator"><span class="keyword">Insert</span> <span class="keyword">are</span> Paste</span></div><div class="line"><span class="string">" map &lt;C-V&gt;		"</span>+gP</div><div class="line">map &lt;S-<span class="keyword">Insert</span>&gt;		<span class="string">"+gP</span></div></pre></td></tr></table></figure>
+
+<p>保存该文件并重启gVim即可，此后在gVim中可使用<code>Shift</code>+<code>Insert</code>组合键进行粘贴操作。</p>
+<h2 id="Vim_Cheatsheet">Vim Cheatsheet</h2>
+<p>在互联网上能找到很多的Vim cheatsheet（点击<a href="http://vim.rtorr.com/lang/zh_cn/" target="_blank" rel="external">这里</a>和<a href="http://www.fprintf.net/vimCheatSheet.html" target="_blank" rel="external">这里</a>）以及Vim键盘映射图（点击<a href="http://www.cnblogs.com/JessonChan/archive/2010/11/25/1888020.html" target="_blank" rel="external">这里</a>和<a href="http://michael.peopleofhonoronly.com/vim/" target="_blank" rel="external">这里</a>），这些高人们制作的图表在完整性和准确性上自然是难以挑剔，对于我们学习Vim肯定是大有裨益；但同时应当注意到Vim支持指令的缩写和简写，故网上cheatsheet和教程中大量的指令都只是一两个字母或组合键，缺乏经验的初学者很难从指令的字面推断出该指令的具体含义。因此我在下面的Vim cheatsheet中专门加入了各指令的英文全称，有英语基础的学习者可利用这些英文词汇帮助记忆表中各条Vim指令：</p>
+<h3 id="编辑、保存与退出">编辑、保存与退出</h3>
+<table>
+<thead>
+<tr>
+<th>Vim指令</th>
+<th>英文全称</th>
+<th>指令含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>:w</code></td>
+<td><strong>w</strong>rite</td>
+<td>将缓存区内容写入文件，即保存改动</td>
+</tr>
+<tr>
+<td><code>:q</code></td>
+<td><strong>q</strong>uit</td>
+<td>退出Vim</td>
+</tr>
+<tr>
+<td><code>:q!</code></td>
+<td><strong>q</strong>uit</td>
+<td>放弃未保存的改动并退出Vim</td>
+</tr>
+<tr>
+<td><code>:wq</code></td>
+<td><strong>w</strong>rite &amp; <strong>q</strong>uit</td>
+<td>保存改动并退出Vim</td>
+</tr>
+<tr>
+<td><code>:e [file]</code></td>
+<td><strong>e</strong>dit</td>
+<td>编辑文件[file]，如未指定文件名则重新载入并编辑当前文件</td>
+</tr>
+<tr>
+<td><code>:r {file}</code></td>
+<td><strong>r</strong>ead</td>
+<td>将文件{file}的内容插入到当前光标后</td>
+</tr>
+<tr>
+<td><code>gf</code></td>
+<td><strong>g</strong>oto <strong>f</strong>ile</td>
+<td>根据光标悬停处的文件名打开当前路径下的对应文件</td>
+</tr>
+</tbody>
+</table>
+<h3 id="光标移动">光标移动</h3>
+<table>
+<thead>
+<tr>
+<th>Vim指令</th>
+<th>英文全称</th>
+<th>指令含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>h</code></td>
+<td>—</td>
+<td>左移光标（字母h在hjkl中排在最左边）</td>
+</tr>
+<tr>
+<td><code>j</code></td>
+<td>—</td>
+<td>下移光标（字母j看起来像一个向下的箭头）</td>
+</tr>
+<tr>
+<td><code>k</code></td>
+<td>—</td>
+<td>上移光标</td>
+</tr>
+<tr>
+<td><code>l</code></td>
+<td>—</td>
+<td>右移光标（字母l在hjkl中排在最右边）</td>
+</tr>
+<tr>
+<td><code>0</code></td>
+<td>—</td>
+<td>当前行行首</td>
+</tr>
+<tr>
+<td><code>^</code></td>
+<td>—</td>
+<td>当前行行首非空格字符</td>
+</tr>
+<tr>
+<td><code>$</code></td>
+<td>—</td>
+<td>当前行行尾</td>
+</tr>
+<tr>
+<td><code>[line]G</code></td>
+<td><strong>g</strong>oto line</td>
+<td>跳转到第[line]行行首非空格字符，如未指定行号则跳转到文档末行</td>
+</tr>
+<tr>
+<td><code>[line]gg</code></td>
+<td><strong>g</strong>oto line</td>
+<td>跳转到第[line]行行首非空格字符，如未指定行号则跳转到文档首行</td>
+</tr>
+<tr>
+<td><code>[count]+</code></td>
+<td>—</td>
+<td>向下跳转[count]行到行首非空格字符，如未指定行数则跳转到下一行</td>
+</tr>
+<tr>
+<td><code>[count]-</code></td>
+<td>—</td>
+<td>向上跳转[count]行到行首非空格字符，如未指定行数则跳转到上一行</td>
+</tr>
+<tr>
+<td><code>w</code></td>
+<td><strong>w</strong>ords forward</td>
+<td>移动到下个word开头</td>
+</tr>
+<tr>
+<td><code>W</code></td>
+<td><strong>W</strong>ORDS forward</td>
+<td>移动到下个WORD开头</td>
+</tr>
+<tr>
+<td><code>e</code></td>
+<td>forward to <strong>e</strong>nd of words</td>
+<td>移动到下个word末尾</td>
+</tr>
+<tr>
+<td><code>E</code></td>
+<td>forward to <strong>e</strong>nd of WORDS</td>
+<td>移动到下个WORD末尾</td>
+</tr>
+<tr>
+<td><code>b</code></td>
+<td>words <strong>b</strong>ackward</td>
+<td>移动到上个word开头</td>
+</tr>
+<tr>
+<td><code>B</code></td>
+<td>WORDS <strong>b</strong>ackward</td>
+<td>移动到上个WORD开头</td>
+</tr>
+<tr>
+<td><code>ge</code></td>
+<td><strong>g</strong>o backwards to <strong>e</strong>nd of words</td>
+<td>移动到上个word末尾</td>
+</tr>
+<tr>
+<td><code>gE</code></td>
+<td><strong>g</strong>o backwards to <strong>e</strong>nd of WORDS</td>
+<td>移动到上个WORD末尾</td>
+</tr>
+<tr>
+<td><code>f{char}</code></td>
+<td><strong>f</strong>orward to occurrence of {char}</td>
+<td>将光标向右移动到本行中的{char}字符上</td>
+</tr>
+<tr>
+<td><code>F{char}</code></td>
+<td><strong>f</strong>orward to occurrence of {char}</td>
+<td>将光标向左移动到本行中的{char}字符上</td>
+</tr>
+<tr>
+<td><code>t{char}</code></td>
+<td><strong>t</strong>ill before occurrence of {char}</td>
+<td>将光标向右移动到本行中的{char}字符前</td>
+</tr>
+<tr>
+<td><code>T{char}</code></td>
+<td><strong>t</strong>ill before occurrence of {char}</td>
+<td>将光标向左移动到本行中的{char}字符前</td>
+</tr>
+<tr>
+<td><code>;</code></td>
+<td>—</td>
+<td>按照之前的方向重复f、F、t或T操作</td>
+</tr>
+<tr>
+<td><code>,</code></td>
+<td>—</td>
+<td>按照与之前相反的方向重复f、F、t或T操作</td>
+</tr>
+</tbody>
+</table>
+<p>表中word与WORD的区别在于：word以标点（不包括数字和下划线）或空白（空格、Tab、换行符等）结尾，而WORD只以空白结尾。例如字符串<code>vim7:best_editor ever</code>，用<code>w</code>跳转（word）会分成4段：<code>vim7</code>、<code>:</code>、<code>best_editor</code>和<code>ever</code>，而用<code>W</code>跳转（WORD）则只有2段：<code>vim7:best_editor</code>、<code>ever</code>。由于英文标点属于半角符号，故通常会在每个英文标点后空一格，不会像这个例子这样写的这么紧凑，所以这两种跳转方式的推进速度差不太多。但在中文环境下这二者就会有极为明显的差别：中文标点是全角符号，一般不会再加空格，因此常常出现一大段中文文本中根本就没有任何空白字符的情况，这时如果使用<code>W</code>跳转（WORD）就会从段首直接跳到下一段，而使用<code>w</code>跳转（word）则只会从段首跳到段内第一个标点符号处。</p>
+<h3 id="插入与改写">插入与改写</h3>
+<table>
+<thead>
+<tr>
+<th>Vim指令</th>
+<th>英文全称</th>
+<th>指令含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>i</code></td>
+<td><strong>i</strong>nsert</td>
+<td>在当前光标前插入文本</td>
+</tr>
+<tr>
+<td><code>I</code></td>
+<td><strong>i</strong>nsert</td>
+<td>在当前行行首非空格字符前插入文本</td>
+</tr>
+<tr>
+<td><code>a</code></td>
+<td><strong>a</strong>ppend</td>
+<td>在当前光标后追加文本</td>
+</tr>
+<tr>
+<td><code>A</code></td>
+<td><strong>a</strong>ppend</td>
+<td>在当前行行尾追加文本</td>
+</tr>
+<tr>
+<td><code>o</code></td>
+<td><strong>o</strong>pen new line</td>
+<td>在当前行下方插入新一行文本</td>
+</tr>
+<tr>
+<td><code>O</code></td>
+<td><strong>o</strong>pen new line</td>
+<td>在当前行上方插入新一行文本</td>
+</tr>
+<tr>
+<td><code>r{char}</code></td>
+<td><strong>r</strong>eplace</td>
+<td>将当前选定字符改为{char}</td>
+</tr>
+<tr>
+<td><code>R</code></td>
+<td><strong>r</strong>eplace</td>
+<td>进入改写模式</td>
+</tr>
+<tr>
+<td><code>~</code></td>
+<td>—</td>
+<td>切换当前选定字符的大小写</td>
+</tr>
+<tr>
+<td><code>~{motion}</code></td>
+<td>—</td>
+<td>切换光标移动指令{motion}所选定字符的大小写</td>
+</tr>
+<tr>
+<td><code>s</code></td>
+<td><strong>s</strong>ubstitute</td>
+<td>删除当前字符，并进入插入模式</td>
+</tr>
+<tr>
+<td><code>S</code></td>
+<td><strong>s</strong>ubstitute</td>
+<td>清空当前行，并进入插入模式，等价于<code>cc</code></td>
+</tr>
+<tr>
+<td><code>c{motion}</code></td>
+<td><strong>c</strong>hange</td>
+<td>将光标移动指令{motion}选定的字符删除，并进入插入模式</td>
+</tr>
+<tr>
+<td><code>cc</code></td>
+<td><strong>c</strong>hange</td>
+<td>清空当前行，并进入插入模式，等价于<code>S</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="删除文本">删除文本</h3>
+<table>
+<thead>
+<tr>
+<th>Vim指令</th>
+<th>英文全称</th>
+<th>指令含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>x</code></td>
+<td>—</td>
+<td>删除当前选定字符（这里的“删除”其实是“剪切”，下同）</td>
+</tr>
+<tr>
+<td><code>X</code></td>
+<td>—</td>
+<td>删除当前选定字符之前的字符</td>
+</tr>
+<tr>
+<td><code>d{motion}</code></td>
+<td><strong>d</strong>elete</td>
+<td>将光标移动指令{motion}选定的文本删除</td>
+</tr>
+<tr>
+<td><code>dd</code></td>
+<td><strong>d</strong>elete</td>
+<td>删除当前行</td>
+</tr>
+<tr>
+<td><code>:[range]d</code></td>
+<td><strong>d</strong>elete</td>
+<td>删除指定行号范围[range]内的文本行，如未指定范围则删除当前行</td>
+</tr>
+<tr>
+<td><code>J</code></td>
+<td><strong>j</strong>oin</td>
+<td>将下一行接到本行之后，即删除换行符</td>
+</tr>
+</tbody>
+</table>
+<p>其中Vim行号范围<code>[range]</code>的格式为<code>m</code>（第m行）或<code>m,n</code>（第m行到第n行），除行号数字外还可使用以下符号：</p>
+<ul>
+<li><code>.</code>：当前行</li>
+<li><code>$</code>：文档末行</li>
+<li><code>%</code>：文档所有行，等价于<code>1,$</code></li>
+<li><code>/{pattern}/</code>：从当前行向下查找到包含{pattern}的第一行，参见<a href="#search-and-replace">查找与替换</a></li>
+<li><code>?{pattern}?</code>：从当前行向上查找到包含{pattern}的第一行，参见<a href="#search-and-replace">查找与替换</a></li>
+</ul>
+<h3 id="复制与粘贴">复制与粘贴</h3>
+<table>
+<thead>
+<tr>
+<th>Vim指令</th>
+<th>英文全称</th>
+<th>指令含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>y{motion}</code></td>
+<td><strong>y</strong>ank</td>
+<td>复制光标移动指令{motion}选定的文本</td>
+</tr>
+<tr>
+<td><code>yy</code></td>
+<td><strong>y</strong>ank</td>
+<td>复制当前行</td>
+</tr>
+<tr>
+<td><code>:[range]y</code></td>
+<td><strong>y</strong>ank</td>
+<td>复制指定行号范围[range]内的文本行，如未指定范围则复制当前行</td>
+</tr>
+<tr>
+<td><code>p</code></td>
+<td><strong>p</strong>ut</td>
+<td>在光标后粘贴</td>
+</tr>
+<tr>
+<td><code>P</code></td>
+<td><strong>p</strong>ut</td>
+<td>在光标前粘贴</td>
+</tr>
+<tr>
+<td><code>:[line]pu</code></td>
+<td><strong>p</strong>ut</td>
+<td>粘贴到[line]行之后，如未指定行号则粘贴到当前行后</td>
+</tr>
+<tr>
+<td><code>:[line]pu!</code></td>
+<td><strong>p</strong>ut</td>
+<td>粘贴到[line]行之前，如未指定行号则粘贴到当前行前</td>
+</tr>
+</tbody>
+</table>
+<p>Vim中复制粘贴指令的英文全称看起来可能略有些奇怪，居然不是copy/paste，而是yank/put。之所以选这两个词是因为它们描述了Vim在进行复制粘贴操作时的寄存器动作：Vim本身提供了一组寄存器，其复制和删除（其实是剪切）操作就是把选定的文本从缓存区抽取到寄存器中，而yank这个单词的意思正是“抽，拉”；反过来，Vim进行粘贴操作时则是把寄存器中的文本放到缓存区中，put的意思也正是“放，推”。</p>
+<h3 id="撤销与重做">撤销与重做</h3>
+<table>
+<thead>
+<tr>
+<th>Vim指令</th>
+<th>英文全称</th>
+<th>指令含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>u</code></td>
+<td><strong>u</strong>ndo</td>
+<td>撤销</td>
+</tr>
+<tr>
+<td><code>:u</code></td>
+<td><strong>u</strong>ndo</td>
+<td>撤销</td>
+</tr>
+<tr>
+<td><code>^R</code></td>
+<td><strong>r</strong>edo</td>
+<td>重做</td>
+</tr>
+<tr>
+<td><code>.</code></td>
+<td>—</td>
+<td>重复执行上一条指令</td>
+</tr>
+</tbody>
+</table>
+<p><a name="search-and-replace"></a></p>
+<h3 id="查找与替换">查找与替换</h3>
+<table>
+<thead>
+<tr>
+<th>Vim指令</th>
+<th>英文全称</th>
+<th>指令含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/{pattern}</code></td>
+<td>—</td>
+<td>向下查找{pattern}</td>
+</tr>
+<tr>
+<td><code>?{pattern}</code></td>
+<td>—</td>
+<td>向上查找{pattern}</td>
+</tr>
+<tr>
+<td><code>n</code></td>
+<td><strong>n</strong>ext</td>
+<td>跳转到下一条查找结果</td>
+</tr>
+<tr>
+<td><code>N</code></td>
+<td><strong>n</strong>ext</td>
+<td>跳转到上一条查找结果</td>
+</tr>
+<tr>
+<td><code>:nohl</code></td>
+<td><strong>no</strong> <strong>h</strong>igh<strong>l</strong>ight</td>
+<td>关闭查找结果的高亮显示</td>
+</tr>
+<tr>
+<td><code>:[range]s/{pattern}/{string}/[flag]</code></td>
+<td><strong>s</strong>ubstitute</td>
+<td>将指定行号范围[range]内各行中的{pattern}替换为{string}，如未指定范围则仅对当前行操作，[flag]是可选标志位</td>
+</tr>
+<tr>
+<td><code>:[range]s [flag]</code></td>
+<td><strong>s</strong>ubstitute</td>
+<td>沿用上次替换的{pattern}和{string}继续进行替换，等价于<code>:&amp;</code>，注意此操作不会沿用前次标志位设定</td>
+</tr>
+<tr>
+<td><code>:[range]&amp; [flag]</code></td>
+<td>—</td>
+<td>沿用上次替换的{pattern}和{string}继续进行替换，等价于<code>:s</code>，注意此操作不会沿用前次标志位设定</td>
+</tr>
+</tbody>
+</table>
+<p>替换操作中的可选标志位<code>flag</code>相当于该指令的参数，用户可根据需求同时使用多个互不冲突的标志位。常用标志位的功能如下表所示：</p>
+<ul>
+<li><code>&amp;</code>：沿用上次替换操作的标志位设置，如使用<code>&amp;</code>则必须将其置于其它标志位之前，如<code>:&amp;&amp;</code>、<code>:%s/he/she/&amp;pI</code></li>
+<li><code>c</code>：<strong>c</strong>onfirm，每次替换前均请求确认</li>
+<li><code>e</code>：<strong>e</strong>rror，禁止打印错误信息</li>
+<li><code>g</code>：<strong>g</strong>lobal，替换所有{pattern}的匹配，如无此标志则仅替换每行中第一个匹配</li>
+<li><code>i</code>；<strong>i</strong>gnore case，匹配{pattern}时不区分大小写</li>
+<li><code>I</code>：<strong>i</strong>gnore case，匹配{pattern}时区分大小写</li>
+<li><code>p</code>：<strong>p</strong>rint，打印包含最后一处替换的文本行</li>
+<li><code>n</code>：<strong>n</strong>umber，不执行替换，仅显示找到的{patter}匹配数</li>
+</ul>
+<p>需要指出的是，Vim的查找（包括替换操作中的查找）本身已支持正则表达式，因此在查找和替换一些特殊符号时需要加转义符<code>\</code>，比如：</p>
+<ul>
+<li><code>/[range]</code>：向下查找字母r、a、n、g和e，这五个字母中任何一个都可以匹配<code>[range]</code></li>
+<li><code>/\[range\]</code>：向下查找字符串“[range]”，只有这个由一对中括号和单词range构成的字符串能够唯一地匹配<code>\[range\]</code></li>
+</ul>
+<h2 id="Vim配置">Vim配置</h2>
+<p>以下是一套面向初学者的Vim配置（含详细注释）：</p>
+<figure class="highlight VimL"><figcaption><span>.vimrc</span><a href="https://gist.github.com/sunxb10/5f98c2052ed5d714389a" target="_blank" rel="external">gist snippet</a></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div></pre></td><td class="code"><pre><div class="line"><span class="string">" ==================== Vim 通用设置 =======================</span></div><div class="line"></div><div class="line">set nocompatible  <span class="string">" 禁用vi兼容模式</span></div><div class="line"></div><div class="line">set number  <span class="string">" 显示行号</span></div><div class="line">set ruler  <span class="string">" 显示标尺</span></div><div class="line">set showmatch  <span class="string">" 输入括号时短暂跳转到匹配括号</span></div><div class="line"></div><div class="line">set confirm  <span class="string">" 在需要时提醒用户处理未保存的修改</span></div><div class="line">set nobackup  <span class="string">" 覆盖文件时不生成原文件备份</span></div><div class="line">set noswapfile  <span class="string">" 禁用swap文件（编辑的文件大小远小于电脑物理内存时不需要swap文件）</span></div><div class="line"></div><div class="line">set magic  <span class="string">" 开启Vim正则表达式的magic模式</span></div><div class="line">set ignorecase  <span class="string">" 设置Vim在搜索时默认不区分大小写</span></div><div class="line">set incsearch  <span class="string">" 输入搜索关键词时实时高亮显示匹配结果</span></div><div class="line"></div><div class="line">set autoindent  <span class="string">" 自动将当前行的缩进应用于下一行</span></div><div class="line">set smartindent  <span class="string">" 在autoindent的基础上进行智能缩进</span></div><div class="line">set tabstop=<span class="number">4</span>  <span class="string">" 设定&lt;Tab&gt;的宽度等于4个空格</span></div><div class="line">set expandtab  <span class="string">" 与上一条指令配合将输入的&lt;Tab&gt;转换为指定数量的空格</span></div><div class="line"></div><div class="line">filetype on  <span class="string">" 侦测文件类型</span></div><div class="line">syntax enable  <span class="string">" 开启语法高亮</span></div><div class="line">syntax on  <span class="string">" 使用Vim默认的语法高亮配色</span></div><div class="line"></div><div class="line">colorscheme desert  <span class="string">" 配色方案</span></div><div class="line"></div><div class="line">set fencs=utf-<span class="number">8</span>,gb18030,ucs-bom,gbk,gb2312,cp936,big5,latin-<span class="number">1</span>  <span class="string">" Vim在读入文件时将按此顺序依次尝试解码</span></div><div class="line">set fenc=utf-<span class="number">8</span>  <span class="string">" 设置当前文件编码</span></div><div class="line">set enc=utf-<span class="number">8</span>  <span class="string">" 设置Vim内部编码格式</span></div><div class="line">set tenc=utf-<span class="number">8</span>  <span class="string">" 设置当前Vim终端的编码格式</span></div><div class="line">set nobomb  <span class="string">" 禁止设置BOM</span></div><div class="line"></div><div class="line">set foldenable  <span class="string">" 开启折叠</span></div><div class="line">set foldmethod=syntax  <span class="string">" 根据语法规则创建可折叠区</span></div><div class="line">set foldcolumn=<span class="number">0</span>  <span class="string">" 禁用左侧折叠状态栏</span></div><div class="line">set foldlevel=<span class="number">3</span>  <span class="string">" 设置折叠层级为3，高于此层级的可折叠区将自动折叠</span></div><div class="line">set foldclose=all  <span class="string">" 设定所有高于foldlevel的可折叠区在光标移出后自动折叠</span></div><div class="line">nnoremap &lt;space&gt; @=((foldclosed(line('.'))&lt;<span class="number">0</span>)?'zc':'zo')&lt;CR&gt;  <span class="string">" 用空格键手动控制可折叠区的折叠与展开</span></div><div class="line">    <span class="string">" 上一条指令实际上是将空格键映射到一个判断并控制折叠的指令，具体解释如下：</span></div><div class="line">    <span class="string">"     nnoremap是无递归映射，即禁止右侧被映射到的指令继续映射，无递归映射可避免很多莫名其妙的bug</span></div><div class="line">    <span class="string">"     &lt;space&gt;是空格键，&lt;CR&gt;是回车</span></div><div class="line">    <span class="string">"     @=是表达式寄存器，其作用是执行右侧指令并得到计算结果，该结果必须是字符串</span></div><div class="line">    <span class="string">"     foldclosed()用于判断所指定的行是否被折叠，参数是行号，返回值是行号（被折叠）或-1（未被折叠）</span></div><div class="line">    <span class="string">"     line()用于获取指定行的行号，其参数'.'代表当前光标所在行</span></div><div class="line">    <span class="string">"     zc是折叠指令，zo是展开指令</span></div><div class="line">    <span class="string">"     实现功能就是按下空格时调用foldclosed()判断光标所在行是否处于展开状态，若是就调用zc折叠，若否则调用zo展开</span></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"><span class="string">" ================= gVim (Windows) 设置 ====================</span></div><div class="line"></div><div class="line"><span class="string">" 实际使用中最好将这部分设置放在 [Vim 通用设置] 之前以避免上述设置被覆盖</span></div><div class="line"></div><div class="line"><span class="string">" set guifont=Consolas:h12  "</span> 字体设置</div><div class="line"></div><div class="line"><span class="string">" source $VIMRUNTIME/vimrc_example.vim  "</span> 使用gVim附带的vimrc示例配置</div><div class="line"><span class="string">" source $VIMRUNTIME/mswin.vim  "</span> 使用gVim附带的Windows风格的快捷键映射</div><div class="line"><span class="string">" behave mswin  "</span> 设定鼠标选择行为采用Windows风格</div><div class="line"></div><div class="line"><span class="string">" if has("</span>win32<span class="string">")   "</span> 设置Vim启动时自动最大化</div><div class="line"><span class="string">"   au GUIEnter * simalt ~x</span></div><div class="line"><span class="string">" endif</span></div><div class="line"></div><div class="line"><span class="string">" source $VIMRUNTIME/delmenu.vim  "</span> 使用gVim附带的.vim文件删除所有菜单设定</div><div class="line"><span class="string">" source $VIMRUNTIME/menu.vim  "</span> 按照gVim附带的.vim文件重新设定菜单</div><div class="line"><span class="string">" language messages zh_CN.utf-8  "</span> 设定使用utf-<span class="number">8</span>编码的简体中文显示信息</div></pre></td></tr></table></figure>
+
+<p>如果对上述指令不明白，可利用<code>:help</code>指令查询Vim帮助文档，如<code>:help &#39;autoindent&#39;</code>。</p>
+<h2 id="相关资料">相关资料</h2>
+<h3 id="Vim教程">Vim教程</h3>
+<ul>
+<li>vimtutor（Vim自带教程）</li>
+<li><a href="http://yannesposito.com/Scratch/en/blog/Learn-Vim-Progressively/" target="_blank" rel="external">Learn Vim Progressively</a>（英文版）、<a href="http://www.ccvita.com/487.html" target="_blank" rel="external">《简明Vim练级攻略》</a>（中文版） </li>
+<li><a href="http://files.swaroopch.com/vim/byte_of_vim_v051.pdf" target="_blank" rel="external">A Byte of Vim</a></li>
+<li><a href="http://www.openvim.com/" target="_blank" rel="external">Interactive Vim tutorial</a></li>
+<li><a href="http://www.study-area.org/tips/vim/index.html" target="_blank" rel="external">大家來學VIM（一個歷久彌新的編輯器）</a></li>
+<li><a href="http://linux.vbird.org/linux_basic/0310vi.php" target="_blank" rel="external">vim程式編輯器</a></li>
+</ul>
+<h3 id="Vim技巧">Vim技巧</h3>
+<ul>
+<li><a href="http://www.2maomao.com/blog/wp-content/uploads/vim_tips.txt" target="_blank" rel="external">最佳vim技巧</a></li>
+<li><a href="http://www.ibm.com/developerworks/cn/linux/l-tip-prompt/tip15/" target="_blank" rel="external">神奇的VIM</a></li>
+<li><a href="https://www.ibm.com/developerworks/cn/views/linux/libraryview.jsp?type_by=%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0&amp;view_by=search&amp;search_by=Vim+%E5%AE%9E%E7%94%A8%E6%8A%80%E6%9C%AF" target="_blank" rel="external">Vim 实用技术</a></li>
+<li><a href="http://easwy.com/blog/archives/advanced-vim-skills-catalog/" target="_blank" rel="external">vi/vim使用进阶</a></li>
+</ul>
+<h3 id="Vim配置-1">Vim配置</h3>
+<ul>
+<li><a href="http://amix.dk/vim/vimrc.html" target="_blank" rel="external">The ultimate Vim configuration</a>（amix.dk原版）、<a href="http://blog.csdn.net/redguardtoo/article/details/1172136" target="_blank" rel="external">《史上最强的Vim 配置文件》</a>（国内网友修订版）</li>
+<li><a href="http://vimconfig.com/" target="_blank" rel="external">VimConfig</a> </li>
+</ul>
+<h3 id="Vim游戏">Vim游戏</h3>
+<ul>
+<li><a href="http://vim-adventures.com/" target="_blank" rel="external">VIM Adventures</a></li>
+<li><a href="http://vimgolf.com/" target="_blank" rel="external">VimGolf</a> </li>
+</ul>
+<h3 id="正则表达式">正则表达式</h3>
+<ul>
+<li>Vim帮助文档中关于正则表达式的说明<code>:help regex</code></li>
+<li><a href="http://vimregex.com/" target="_blank" rel="external">Vim Regular Expressions 101</a></li>
+<li><a href="http://deerchao.net/tutorials/regex/regex.htm" target="_blank" rel="external">正则表达式30分钟入门教程</a></li>
+<li><a href="https://msdn.microsoft.com/zh-cn/library/ae5bf541(v=vs.90).aspx" target="_blank" rel="external">正则表达式语法</a></li>
+<li><a href="http://www.regexr.com/" target="_blank" rel="external">RegExr</a></li>
+</ul>
+]]></content>
+         
+         
+           
+             
+              <breadCrumb title="Vim" url="http://sunxb10.github.io/categories/Vim/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
     
   <url>
     <loc>http://sunxb10.github.io/2015/01/02/notes-on-rsa/</loc>
